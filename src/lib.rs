@@ -24,9 +24,10 @@ pub fn run(command: Command) -> Result<(), Box<dyn Error>> {
 
     let sample_result = roll_dice(2, 6);
 
-    println!("Got max {} and min {} on some random rolls",
+    println!("Got max {} and min {} on the following rolls: {:#?}",
              sample_result.max,
              sample_result.min,
+             sample_result.dice
         );
 
     Ok(())
