@@ -40,10 +40,19 @@ pub struct Rolls {
 
 pub fn roll_dice(count: u32, sides: u32) -> Rolls {
     let mut dice: Vec<u32> = Vec::new();
+    let mut min = u32::MAX;
+    let mut max = u32::MIN;
 
     for _ in 0..count {
-        dice.push(rand::thread_rng().gen_range(0..=sides));
+        let die = rand::thread_rng().gen_range(1..=sides);
+        if die > max {
+            max = die;
+        }
+        if die < min {
+            min = die;
+        }
+        dice.push(die);
     };
 
-    Rolls { max: 0, min: 0, dice }
+    Rolls { max, min, dice }
 }
