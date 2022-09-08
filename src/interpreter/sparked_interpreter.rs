@@ -2,12 +2,24 @@ use sparksrs::Rolls;
 use crate::interpreter::{Reply, RollStatus::*};
 
 pub fn sparked_check(roll: Rolls) -> Reply {
-    Reply {
-        title: String::from("Sample title"),
-        description: String::from("Sample description"),
-        status: MixedSuccess, 
-        dice: vec![4]
-    }
+   let (title_literal, status) = match roll.max {
+       10 => ("Critical success!", Crit),
+       8 | 9 => ("Clean success!", FullSuccess),
+       6 | 7 => ("Strained success!", MixedSuccess),
+       2..=5 => ("Failure!", Failure),
+       1 => ("Critical failure!", Failure),
+       _ => ("Dice value out of bounds. This should never happen!", Failure),
+   };
+
+   let description = format!("Rolled **{}** on {}d10.", roll.max, roll.dice.len());
+
+   Reply {
+       title: String::from(title_literal),
+       description,
+       status,
+       dice: roll.dice
+   }
+
 }
 
 pub fn sparked_fallout(score: u32) -> Reply {
@@ -21,7 +33,7 @@ pub fn sparked_fallout(score: u32) -> Reply {
 }
 
 #[cfg(test)]
-mod sbr_tests {
+mod sbr_interpreter_tests {
     use super::*;
    
     #[test]
@@ -33,6 +45,26 @@ mod sbr_tests {
             description: String::from("Take **minor** fallout if this roll is **lower** than your total stress."),
             status: MixedSuccess,
             dice: vec![4]
+        };
+
+        assert_eq!(sparks_reply, correct_reply);
+    }
+
+    #[test]
+    fn test_skill_check() {
+        let test_rolls = Rolls {
+            max: 9,
+            min: 2,
+            dice: vec![2, 4, 9],
+        };
+
+        let sparks_reply = sparked_check(test_rolls);
+
+        let correct_reply = Reply {
+            title: String::from("Clean success!"),
+            description: String::from("Rolled **9** on 3d10."),
+            status: FullSuccess,
+            dice: vec![2, 4, 9]
         };
 
         assert_eq!(sparks_reply, correct_reply);

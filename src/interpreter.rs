@@ -3,7 +3,7 @@ pub enum RollStatus {
     Crit,
     FullSuccess,
     MixedSuccess,
-    Fail
+    Failure
 }
 
 #[derive(PartialEq, Eq, Debug)]
@@ -16,4 +16,4 @@ pub struct Reply {
 
 
 mod sparked_interpreter;
-
+mod pbta_interpreter;
