@@ -2,6 +2,8 @@ use std::{env, process};
 
 use sparksrs::Command;
 
+mod interpreter;
+
 fn main() {
     // Sparks!
     let command = Command::build(env::args()).unwrap_or_else(|err| {

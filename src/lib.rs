@@ -43,16 +43,17 @@ pub fn run(command: Command) -> Result<(), Box<dyn Error>> {
         "sbr" => SbR(Some(1)),
         "pbta" => PbtA(2),
         "custom" => Custom(2, 6),
+        &_ => Custom(2, 6)
+
     };
 
-    let results: Rolls;
-
-    match &system {
-        FitD(pool) => results = roll_dice(pool, 6),
-        SbR(_) => results = roll_dice(1, 12),
-        PbtA(stat) => results = roll_dice(2, 6),
+    let results = match system {
+        FitD(pool) => roll_dice(pool, 6),
+        SbR(_) => roll_dice(1, 12),
+        PbtA(_) => roll_dice(2, 6),
         Custom(count, sides) => roll_dice(count, sides),
-    }
+    };
+
     println!(
         "Got max {} and min {} on the following rolls: {:?}",
         results.max,
