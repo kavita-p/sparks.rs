@@ -7,27 +7,35 @@ pub struct Command {
 }
 
 impl Command {
-    pub fn build(args: &[String]) -> Result<Command, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+    pub fn build(
+        mut args: impl Iterator<Item = String>,
+    ) -> Result<Command, &'static str> {
+        args.next();
 
-        let system = args[1].clone();
-        let roll_type = args[2].clone();
+        let system = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a system!")
+        };
+
+        let roll_type = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a roll type!")
+        };
+
 
         Ok(Command { roll_type, system})
     }
 }
 
 pub fn run(command: Command) -> Result<(), Box<dyn Error>> {
-    println!("Dice have yet to be rolled! Command was {} {}", command.system, command.roll_type);
+    println!("Command was {} {}", command.system, command.roll_type);
 
     let sample_result = roll_dice(2, 6);
 
-    println!("Got max {} and min {} on the following rolls: {:#?}",
+    println!("Got max {} and min {} on the following rolls: {:?}",
              sample_result.max,
              sample_result.min,
-             sample_result.dice
+             sample_result.dice,
         );
 
     Ok(())
@@ -46,12 +54,8 @@ pub fn roll_dice(count: u32, sides: u32) -> Rolls {
 
     for _ in 0..count {
         let die = rand::thread_rng().gen_range(1..=sides);
-        if die > max {
-            max = die;
-        }
-        if die < min {
-            min = die;
-        }
+        if die < min { min = die };
+        if die > max { max = die };
         dice.push(die);
     };
 
