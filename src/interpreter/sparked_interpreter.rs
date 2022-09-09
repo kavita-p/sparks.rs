@@ -33,7 +33,7 @@ pub fn sparked_fallout(score: u32) -> Reply {
 }
 
 #[cfg(test)]
-mod sbr_interpreter_tests {
+mod tests {
     use super::*;
    
     #[test]

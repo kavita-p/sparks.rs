@@ -34,7 +34,7 @@ pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
 }
 
 #[cfg(test)]
-mod pbta_interpreter_tests {
+mod tests {
     use super::*;
 
 
