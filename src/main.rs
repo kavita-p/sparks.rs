@@ -1,6 +1,10 @@
+!#[allow(dead_code)]
+
 use std::{env, process};
 
 use sparksrs::Command;
+
+mod interpreter;
 
 fn main() {
     // Sparks!
