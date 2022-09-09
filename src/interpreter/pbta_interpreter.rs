@@ -15,7 +15,7 @@ pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
 
     let mut description = format!("Got **{}** on 2d6", score);
 
-    match score.cmp(&0) {
+    match stat.cmp(&0) {
         Ordering::Greater => { write!(description, " + {}.", stat).unwrap(); },
         Ordering::Equal => { description += "."; }
         Ordering::Less => { write!(description, " - {}.", stat.saturating_abs()).unwrap(); },
@@ -39,10 +39,10 @@ mod pbta_interpreter_tests {
 
 
     #[test]
-    fn renders_positive_stat () {
+    fn renders_no_stat () {
         let correct_reply = Reply {
             title: String::from("Full success!"),
-            description: String::from("Got **12** on 2d6 + 0.\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable."),
+            description: String::from("Got **12** on 2d6.\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable."),
             status: Crit,
             dice: vec![6, 6]
         };
@@ -54,6 +54,26 @@ mod pbta_interpreter_tests {
         };
 
         let sparks_reply = pbta_move(rolls, 0);
+
+        assert_eq!(sparks_reply, correct_reply);
+    }
+
+    #[test]
+    fn renders_negative_stat () {
+        let correct_reply = Reply {
+            title: String::from("Failure!"),
+            description: String::from("Got **3** on 2d6 - 1."),
+            status: Failure,
+            dice: vec![3, 1]
+        };
+
+        let rolls = Rolls {
+            max: 3,
+            min: 1,
+            dice: vec![3, 1]
+        };
+
+        let sparks_reply = pbta_move(rolls, -1);
 
         assert_eq!(sparks_reply, correct_reply);
     }
