@@ -1,5 +1,6 @@
 use std::error::Error;
 use rand::Rng;
+use crate::System::*;
 
 pub struct Command {
     pub system: String,
@@ -23,20 +24,42 @@ impl Command {
         };
 
 
-        Ok(Command { roll_type, system})
+        Ok(Command { roll_type, system })
     }
+}
+
+pub enum System {
+    PbtA(i32),
+    FitD(u32),
+    SbR(Option<u32>),
+    Custom(u32, u32),
 }
 
 pub fn run(command: Command) -> Result<(), Box<dyn Error>> {
     println!("Command was {} {}", command.system, command.roll_type);
 
-    let sample_result = roll_dice(2, 6);
+    let system = match &command.system as &str {
+        "fitd" => FitD(2),
+        "sbr" => SbR(Some(1)),
+        "pbta" => PbtA(2),
+        "custom" => Custom(2, 6),
+        &_ => Custom(2, 6)
 
-    println!("Got max {} and min {} on the following rolls: {:?}",
-             sample_result.max,
-             sample_result.min,
-             sample_result.dice,
-        );
+    };
+
+    let results = match system {
+        FitD(pool) => roll_dice(pool, 6),
+        SbR(_) => roll_dice(1, 12),
+        PbtA(_) => roll_dice(2, 6),
+        Custom(count, sides) => roll_dice(count, sides),
+    };
+
+    println!(
+        "Got max {} and min {} on the following rolls: {:?}",
+        results.max,
+        results.min,
+        results.dice,
+    );
 
     Ok(())
 }
