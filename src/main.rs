@@ -1,4 +1,5 @@
-#![allow(dead_code)]
+// Cut this line when debugging dead code.
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports))]
 
 use std::{env, process};
 
