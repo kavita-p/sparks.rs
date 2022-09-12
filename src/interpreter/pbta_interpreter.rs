@@ -17,13 +17,13 @@ pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
 
     match stat.cmp(&0) {
         Ordering::Greater => {
-            write!(description, " + {}.", stat).unwrap();
+            write!(description, " + {}.", stat).unwrap_or_default();
         }
         Ordering::Equal => {
             description += ".";
         }
         Ordering::Less => {
-            write!(description, " - {}.", stat.saturating_abs()).unwrap();
+            write!(description, " - {}.", stat.saturating_abs()).unwrap_or_default();
         }
     };
 

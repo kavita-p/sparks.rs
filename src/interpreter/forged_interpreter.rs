@@ -59,16 +59,14 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
             Clear => {}
         };
     } else {
-        write!(description, "Got **{}** on {}d", score, pool).expect("");
+        write!(description, "Got **{}** on {}d", score, pool).unwrap_or_default();
         if zero_d {
-            write!(description, " (rolled as the lower of 2d.)").expect("");
+            write!(description, " (rolled as the lower of 2d.)").unwrap_or_default();
         } else {
-            write!(description, ".").expect("");
+            write!(description, ".").unwrap_or_default();
         };
-        match roll_type {
-            Action => write!(description, ""),
-            Resist => write!(description, " Take **{} stress** to resist.", score),
-            Downtime => write!(
+        if roll_type == Downtime {
+            write!(
                 description,
                 " **{} ticks** on the relevant clock.",
                 match status {
@@ -77,10 +75,9 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
                     MixedSuccess => 2,
                     Failure => 1,
                 }
-            ),
-            Clear => write!(description, ""),
+            )
+            .unwrap_or_default();
         }
-        .expect("write! should return a string.");
     };
 
     Reply {
