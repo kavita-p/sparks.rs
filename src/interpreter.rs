@@ -7,6 +7,14 @@ pub enum RollStatus {
 }
 
 #[derive(PartialEq, Eq, Debug)]
+pub enum ForgedType {
+    Action,
+    Resist,
+    Downtime,
+    Clear,
+}
+
+#[derive(PartialEq, Eq, Debug)]
 pub struct Reply {
     pub title: String,
     pub description: String,
