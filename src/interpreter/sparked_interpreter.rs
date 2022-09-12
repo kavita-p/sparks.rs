@@ -8,10 +8,7 @@ pub fn sparked_check(roll: Rolls) -> Reply {
         6 | 7 => ("Strained success!", MixedSuccess),
         2..=5 => ("Failure!", Failure),
         1 => ("Critical failure!", Failure),
-        _ => (
-            "Dice value out of bounds. This should never happen!",
-            Failure,
-        ),
+        _ => unreachable!(),
     };
 
     let description = format!("Rolled **{}** on {}d10.", roll.max, roll.dice.len());
