@@ -1,50 +1,57 @@
-use sparksrs::Rolls;
 use crate::interpreter::{Reply, RollStatus::*};
+use sparksrs::Rolls;
 
 pub fn sparked_check(roll: Rolls) -> Reply {
-   let (title_literal, status) = match roll.max {
-       10 => ("Critical success!", Crit),
-       8 | 9 => ("Clean success!", FullSuccess),
-       6 | 7 => ("Strained success!", MixedSuccess),
-       2..=5 => ("Failure!", Failure),
-       1 => ("Critical failure!", Failure),
-       _ => ("Dice value out of bounds. This should never happen!", Failure),
-   };
+    let (title_literal, status) = match roll.max {
+        10 => ("Critical success!", Crit),
+        8 | 9 => ("Clean success!", FullSuccess),
+        6 | 7 => ("Strained success!", MixedSuccess),
+        2..=5 => ("Failure!", Failure),
+        1 => ("Critical failure!", Failure),
+        _ => (
+            "Dice value out of bounds. This should never happen!",
+            Failure,
+        ),
+    };
 
-   let description = format!("Rolled **{}** on {}d10.", roll.max, roll.dice.len());
+    let description = format!("Rolled **{}** on {}d10.", roll.max, roll.dice.len());
 
-   Reply {
-       title: String::from(title_literal),
-       description,
-       status,
-       dice: roll.dice
-   }
-
+    Reply {
+        title: String::from(title_literal),
+        description,
+        status,
+        dice: roll.dice,
+    }
 }
 
 pub fn sparked_fallout(score: u32) -> Reply {
     let fallout_scale = if score > 6 { "major" } else { "minor" };
     Reply {
         title: format!("Rolled {} to test for fallout.", score),
-        description: format!("Take **{}** fallout if this roll is **lower** than your total stress.", fallout_scale),
+        description: format!(
+            "Take **{}** fallout if this roll is **lower** than your total stress.",
+            fallout_scale
+        ),
         status: MixedSuccess,
-        dice: vec![score]
+        dice: vec![score],
     }
 }
 
 #[cfg(test)]
 mod sbr_interpreter_tests {
     use super::*;
-   
+
     #[test]
     fn test_minor_fallout() {
         let sparks_reply = sparked_fallout(4);
 
         let correct_reply = Reply {
             title: String::from("Rolled 4 to test for fallout."),
-            description: String::from("Take **minor** fallout if this roll is **lower** than your total stress."),
+            description: String::from(
+                "Take **minor** fallout if this roll is **lower** than your total stress.",
+            ),
             status: MixedSuccess,
-            dice: vec![4]
+            dice: vec![4],
         };
 
         assert_eq!(sparks_reply, correct_reply);
@@ -64,7 +71,7 @@ mod sbr_interpreter_tests {
             title: String::from("Clean success!"),
             description: String::from("Rolled **9** on 3d10."),
             status: FullSuccess,
-            dice: vec![2, 4, 9]
+            dice: vec![2, 4, 9],
         };
 
         assert_eq!(sparks_reply, correct_reply);
