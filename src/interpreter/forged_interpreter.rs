@@ -48,15 +48,15 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
     if sixes > 1 {
         write!(description, "Got {} sixes on {}d.", sixes, pool).expect("write! should return a string.");
         match roll_type {
-            Action => write!(description, " You take **increased effect**."),
-            Resist => write!(description, " **Clear 1 stress.**"),
-            Downtime => write!(description, " **5 ticks** on the relevant clock."),
-            Clear => write!(description, "")
-        }.expect("write! should return a string.");
+            Action => description.push_str(" You take **increased effect**."),
+            Resist => description.push_str(" **Clear 1 stress.**"),
+            Downtime => description.push_str(" **5 ticks** on the relevant clock."),
+            Clear => {}
+        };
     } else {
         write!(description, "Got **{}** on {}d", score, pool).expect("");
         if zero_d {
-            write!(description, " (rolled as the lower of 2d).").expect("");
+            write!(description, " (rolled as the lower of 2d.)").expect("");
         } else {
             write!(description, ".").expect("");
         };
