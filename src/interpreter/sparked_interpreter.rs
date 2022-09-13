@@ -39,7 +39,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_minor_fallout() {
+    fn minor_fallout() {
         let sparks_reply = sparked_fallout(4);
 
         let correct_reply = Reply {
@@ -51,11 +51,11 @@ mod tests {
             dice: vec![4],
         };
 
-        assert_eq!(sparks_reply, correct_reply);
+        assert_eq!(correct_reply, sparks_reply);
     }
 
     #[test]
-    fn test_skill_check() {
+    fn skill_check() {
         let test_rolls = Rolls {
             max: 9,
             min: 2,
@@ -71,6 +71,6 @@ mod tests {
             dice: vec![2, 4, 9],
         };
 
-        assert_eq!(sparks_reply, correct_reply);
+        assert_eq!(correct_reply, sparks_reply);
     }
 }

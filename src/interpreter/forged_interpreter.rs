@@ -93,7 +93,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn process_action_crit () {
+    fn action_crit () {
         let correct_reply = Reply {
             title: "Critical success!".to_string(),
             description: "Got **2 sixes** on 3d. You take **increased effect**.".to_string(),

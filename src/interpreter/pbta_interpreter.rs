@@ -48,7 +48,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn renders_no_stat() {
+    fn no_stat() {
         let correct_reply = Reply {
             title: String::from("Full success!"),
             description: String::from("Got **12** on 2d6.\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable."),
@@ -64,11 +64,11 @@ mod tests {
 
         let sparks_reply = pbta_move(rolls, 0);
 
-        assert_eq!(sparks_reply, correct_reply);
+        assert_eq!(correct_reply, sparks_reply);
     }
 
     #[test]
-    fn renders_negative_stat() {
+    fn negative_stat() {
         let correct_reply = Reply {
             title: String::from("Failure!"),
             description: String::from("Got **3** on 2d6 - 1."),
@@ -84,6 +84,6 @@ mod tests {
 
         let sparks_reply = pbta_move(rolls, -1);
 
-        assert_eq!(sparks_reply, correct_reply);
+        assert_eq!(correct_reply, sparks_reply);
     }
 }
