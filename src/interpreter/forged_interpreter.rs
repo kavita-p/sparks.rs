@@ -50,7 +50,7 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
     let mut description = String::from("");
 
     if sixes > 1 {
-        write!(description, "Got {} sixes on {}d.", sixes, pool)
+        write!(description, "Got **{} sixes** on {}d.", sixes, pool)
             .expect("write! should return a string.");
         match roll_type {
             Action => description.push_str(" You take **increased effect**."),
@@ -87,3 +87,28 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
         dice: rolls.dice,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn process_action_crit () {
+        let correct_reply = Reply {
+            title: "Critical success!".to_string(),
+            description: "Got **2 sixes** on 3d. You take **increased effect**.".to_string(),
+            status: Crit,
+            dice: vec![6, 2, 6]
+        };
+
+        let rolls = Rolls {
+            max: 6,
+            min: 2,
+            dice: vec![6, 2, 6]
+        };
+
+        let sparks_reply = forged_dice(rolls, Action, false);
+
+        assert_eq!(correct_reply, sparks_reply);
+    }
+} 
