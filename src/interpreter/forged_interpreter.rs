@@ -65,7 +65,8 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
     };
 
     if roll_type == Clear {
-        description.push_str("\n\nIf this is more stress then you currently have, you **overindulge.**")
+        description
+            .push_str("\n\nIf this is more stress then you currently have, you **overindulge.**")
     }
 
     Reply {
@@ -81,18 +82,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn action_crit () {
+    fn action_crit() {
         let correct_reply = Reply {
             title: "Critical success!".to_string(),
             description: "Got **2 sixes** on 3d. You take **increased effect.**".to_string(),
             status: Crit,
-            dice: vec![6, 2, 6]
+            dice: vec![6, 2, 6],
         };
 
         let rolls = Rolls {
             max: 6,
             min: 2,
-            dice: vec![6, 2, 6]
+            dice: vec![6, 2, 6],
         };
 
         let sparks_reply = forged_dice(rolls, Action, false);

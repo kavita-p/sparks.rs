@@ -26,7 +26,8 @@ pub fn sparked_fallout(score: u32) -> Reply {
     Reply {
         title: format!("Rolled {score} to test for fallout."),
         description: format!(
-            "Take **{fallout_scale}** fallout if this roll is **lower** than your total stress."),
+            "Take **{fallout_scale}** fallout if this roll is **lower** than your total stress."
+        ),
         status: MixedSuccess,
         dice: vec![score],
     }

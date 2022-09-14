@@ -29,7 +29,9 @@ pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
     };
 
     if score >= 12 {
-        description.push_str("\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable.");
+        description.push_str(
+            "\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable.",
+        );
     }
 
     Reply {
