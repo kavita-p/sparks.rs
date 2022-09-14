@@ -17,22 +17,19 @@ pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
 
     match stat.cmp(&0) {
         Ordering::Greater => {
-            write!(description, " + {}.", stat).unwrap_or_default();
+            // `write!` could hypothetically return an error, but its return value is unneeded.
+            let _ = write!(description, " + {}.", stat);
         }
         Ordering::Equal => {
-            description += ".";
+            description.push_str(".");
         }
         Ordering::Less => {
-            write!(description, " - {}.", stat.saturating_abs()).unwrap_or_default();
+            let _ = write!(description, " - {}.", stat.saturating_abs());
         }
     };
 
     if score >= 12 {
-        write!(
-            description,
-            "\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable."
-        )
-        .unwrap();
+        description.push_str("\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable.");
     }
 
     Reply {

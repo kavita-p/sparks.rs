@@ -24,11 +24,9 @@ pub fn sparked_check(roll: Rolls) -> Reply {
 pub fn sparked_fallout(score: u32) -> Reply {
     let fallout_scale = if score > 6 { "major" } else { "minor" };
     Reply {
-        title: format!("Rolled {} to test for fallout.", score),
+        title: format!("Rolled {score} to test for fallout."),
         description: format!(
-            "Take **{}** fallout if this roll is **lower** than your total stress.",
-            fallout_scale
-        ),
+            "Take **{fallout_scale}** fallout if this roll is **lower** than your total stress."),
         status: MixedSuccess,
         dice: vec![score],
     }
