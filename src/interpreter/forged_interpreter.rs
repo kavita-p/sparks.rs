@@ -53,7 +53,7 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
 
     let mut description = if sixes > 1 {
         match roll_type {
-            Action => format!("Got **{sixes} sixes** on {pool}d. You take **increased effect.**"),
+            Action => format!("Got **{sixes} sixes** on {pool}d. You take **increased effect**."),
             Resist => format!("Rolled a **critical** to resist. (Got **{}** sixes.)", sixes),
             Fortune => format!("Extreme effect, or 5 ticks on the relevant clock. Got **{sixes} sixes** on {pool}d."),
             Clear => String::from(""),
@@ -99,7 +99,7 @@ mod tests {
     fn action_crit() {
         let correct_reply = Reply {
             title: String::from("Critical success!"),
-            description: String::from("Got **2 sixes** on 3d. You take **increased effect.**"),
+            description: String::from("Got **2 sixes** on 3d. You take **increased effect**."),
             status: Crit,
             dice: vec![6, 2, 6],
         };
