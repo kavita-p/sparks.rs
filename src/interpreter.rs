@@ -10,7 +10,7 @@ pub enum RollStatus {
 pub enum ForgedType {
     Action,
     Resist,
-    Downtime,
+    Fortune,
     Clear,
 }
 

@@ -40,7 +40,7 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
                 format!("Take **{}** stress to resist.", 6 - score)
             }
         }
-        Downtime => String::from(match status {
+        Fortune => String::from(match status {
             Crit => "Critical!",
             FullSuccess => "Increased effect!",
             MixedSuccess => "Standard effect.",
@@ -55,12 +55,12 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
         match roll_type {
             Action => format!("Got **{sixes} sixes** on {pool}d. You take **increased effect.**"),
             Resist => format!("Rolled a **critical** to resist. (Got **{}** sixes.)", sixes),
-            Downtime => format!("Extreme effect, or 5 ticks on the relevant clock. Got **{sixes} sixes** on {pool}d."),
+            Fortune => format!("Extreme effect, or 5 ticks on the relevant clock. Got **{sixes} sixes** on {pool}d."),
             Clear => String::from(""),
         }
     } else {
         match roll_type {
-            Action | Downtime => format!("Got **{score}** on **{pool}d**"),
+            Action | Fortune => format!("Got **{score}** on **{pool}d**"),
             Resist => format!("6 minus your score of **{score}** on **{pool}d**"),
             Clear => String::from(""),
         }
