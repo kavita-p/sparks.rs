@@ -13,7 +13,6 @@ fn custom_roll(rolls: Rolls, count: u32, sides: u32) -> Reply {
     }
 }
 
-
 #[cfg(test)]
 
 mod test {
@@ -31,7 +30,7 @@ mod test {
         let rolls = Rolls {
             max: 7,
             min: 6,
-            dice: vec![7, 6]
+            dice: vec![7, 6],
         };
 
         let sparks_reply = custom_roll(rolls, 2, 15);

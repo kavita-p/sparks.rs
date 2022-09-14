@@ -72,10 +72,8 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
         } else {
             description.push_str(" (rolled as the lower of 2d.)")
         }
-    } else if sixes < 2 {
-        if roll_type != Clear {
-            description.push_str(".")
-        }
+    } else if sixes < 2 && roll_type != Clear {
+        description.push('.')
     };
 
     if roll_type == Clear {
