@@ -1,5 +1,7 @@
-use crate::interpreter::{Reply, RollStatus::*};
-use sparksrs::Rolls;
+use crate::{
+    interpreter::{Reply, RollStatus::*},
+    Rolls,
+};
 
 fn custom_roll(rolls: Rolls, count: u32, sides: u32) -> Reply {
     Reply {

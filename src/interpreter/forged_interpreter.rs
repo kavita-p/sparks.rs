@@ -1,6 +1,7 @@
-use crate::interpreter::{ForgedType, ForgedType::*, Reply, RollStatus::*};
-use sparksrs::Rolls;
-use std::fmt::Write as _;
+use crate::{
+    interpreter::{ForgedType, ForgedType::*, Reply, RollStatus::*},
+    Rolls,
+};
 
 fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
     let sixes = rolls

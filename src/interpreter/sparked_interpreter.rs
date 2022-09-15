@@ -1,5 +1,7 @@
-use crate::interpreter::{Reply, RollStatus::*};
-use sparksrs::Rolls;
+use crate::{
+    interpreter::{Reply, RollStatus::*},
+    Rolls,
+};
 
 pub fn sparked_check(roll: Rolls) -> Reply {
     let (title_literal, status) = match roll.max {

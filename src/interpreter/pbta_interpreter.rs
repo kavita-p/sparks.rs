@@ -1,7 +1,8 @@
-use crate::interpreter::{Reply, RollStatus::*};
-use sparksrs::Rolls;
-use std::cmp::Ordering;
-use std::fmt::Write as _;
+use crate::{
+    interpreter::{Reply, RollStatus::*},
+    Rolls,
+};
+use std::{cmp::Ordering, fmt::Write as _};
 
 pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
     let score: i32 = rolls.dice.iter().sum::<u32>() as i32 + stat;

@@ -6,6 +6,8 @@ pub struct Command {
     pub system: String,
     pub roll_type: String,
 }
+#// Cut this line when debugging dead code.
+![cfg_attr(debug_assertions, allow(dead_code, unused_imports))]
 
 impl Command {
     pub fn build(mut args: impl Iterator<Item = String>) -> Result<Command, &'static str> {
@@ -54,9 +56,11 @@ pub fn run(command: Command) -> Result<(), Box<dyn Error>> {
         "Got max {} and min {} on the following rolls: {:?}",
         results.max, results.min, results.dice,
     );
+use rand::Rng;
 
     Ok(())
 }
+mod interpreter;
 
 pub struct Rolls {
     pub max: u32,
