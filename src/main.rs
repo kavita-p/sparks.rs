@@ -10,6 +10,8 @@ use serenity::model::gateway::Ready;
 use serenity::model::id::GuildId;
 use serenity::prelude::*;
 
+use sparksrs::commands;
+
 struct Handler;
 
 #[async_trait]
@@ -37,7 +39,7 @@ impl EventHandler for Handler {
         }
     }
 
-    async fn ready(%self, ctx: Content, ready: Ready) {
+    async fn ready(&self, ctx: Context, ready: Ready) {
         println!("Sparks, ready! Logged in as {}", ready.user.name);
 
         let guild_id = GuildId(
@@ -52,7 +54,7 @@ impl EventHandler for Handler {
                 .create_application_command(|command| commands::ping::register(command))
                 .create_application_command(|command| commands::id::register(command))
         })
-        .await
+        .await;
 
         println!("I now have the following guild slash commands: {:#?}", commands);
 

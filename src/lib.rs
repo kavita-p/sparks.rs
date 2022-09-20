@@ -4,7 +4,7 @@
 use rand::Rng;
 
 mod interpreter;
-mod commands;
+pub mod commands;
 
 pub struct Rolls {
     pub max: u32,

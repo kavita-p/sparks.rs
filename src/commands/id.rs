@@ -18,4 +18,13 @@ pub fn run(options: &[CommandDataOption]) -> String {
     }
 }
 
+pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
+    command.name("id").description("Get a user id").create_option(|option| {
+        option
+            .name("id")
+            .description("The user to look up")
+            .kind(CommandOptionType::User)
+            .required(true)
+    })
+}
 
