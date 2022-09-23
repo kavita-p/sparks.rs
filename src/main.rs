@@ -23,6 +23,7 @@ impl EventHandler for Handler {
             let content = match command.data.name.as_str() {
                 "ping" => commands::ping::run(&command.data.options),
                 "id" => commands::id::run(&command.data.options),
+                "wonderful_command" => commands::wonderful_command::run(&command.data.options),
                 _ => "not implemented".to_string()
             };
 
@@ -49,7 +50,13 @@ impl EventHandler for Handler {
             .expect("GUILD_ID must be an integer"),
         );
 
-        let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
+        let current_commands = guild_id.get_application_commands(&ctx.http).await.expect("Should be able to retrieve commands.");
+
+        for command in current_commands {
+            guild_id.delete_application_command(&ctx.http, command.id).await.expect("Should be able to delete commands.");
+        };
+
+        let commands = guild_id.set_application_commands(&ctx.http, |commands| {
             commands
                 .create_application_command(|command| commands::ping::register(command))
                 .create_application_command(|command| commands::id::register(command))
@@ -58,7 +65,13 @@ impl EventHandler for Handler {
 
         println!("I now have the following guild slash commands: {:#?}", commands);
 
-        let guild_command = Command::create_global_application_command(&ctx.http, |command| {
+       let current_global_commands = Command::get_global_application_commands(&ctx.http).await.expect("Should be able to retrieve commands.");
+ 
+        for command in current_global_commands {
+            Command::delete_global_application_command(&ctx.http, command.id).await.expect("Should be able to delete commands.");
+        };
+
+       let guild_command = Command::create_global_application_command(&ctx.http, |command| {
             commands::wonderful_command::register(command)
         })
         .await;
