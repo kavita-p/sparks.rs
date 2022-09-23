@@ -60,6 +60,7 @@ impl EventHandler for Handler {
             commands
                 .create_application_command(|command| commands::ping::register(command))
                 .create_application_command(|command| commands::id::register(command))
+                .create_application_command(|command| commands::roll::register(command))
         })
         .await;
 
