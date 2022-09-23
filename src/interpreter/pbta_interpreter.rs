@@ -4,14 +4,14 @@ use crate::{
 };
 use std::{cmp::Ordering, fmt::Write as _};
 
-pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
-    let score: i32 = rolls.dice.iter().sum::<u32>() as i32 + stat;
+pub fn pbta_move(rolls: Rolls, stat: i64) -> Reply {
+    let score: i64 = rolls.dice.iter().sum::<u64>() as i64 + stat;
 
     let (title_literal, status) = match score {
-        12..=i32::MAX => ("Full success!", Crit),
+        12..=i64::MAX => ("Full success!", Crit),
         10 | 11 => ("Full success!", FullSuccess),
         7..=9 => ("Mixed success!", MixedSuccess),
-        i32::MIN..=6 => ("Failure!", Failure),
+        i64::MIN..=6 => ("Failure!", Failure),
     };
 
     let mut description = format!("Got **{}** on 2d6", score);

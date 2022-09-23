@@ -23,6 +23,7 @@ impl EventHandler for Handler {
             let content = match command.data.name.as_str() {
                 "ping" => commands::ping::run(&command.data.options),
                 "id" => commands::id::run(&command.data.options),
+                "roll" => commands::roll::run(&command.data.options),
                 "wonderful_command" => commands::wonderful_command::run(&command.data.options),
                 _ => "not implemented".to_string()
             };

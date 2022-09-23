@@ -3,7 +3,7 @@ use crate::{
     Rolls,
 };
 
-fn custom_roll(rolls: Rolls, count: u32, sides: u32) -> Reply {
+pub fn custom_roll(rolls: Rolls, count: u64, sides: u64) -> Reply {
     Reply {
         title: format!("{}", rolls.max),
         description: format!(

@@ -23,7 +23,7 @@ pub fn sparked_check(roll: Rolls) -> Reply {
     }
 }
 
-pub fn sparked_fallout(score: u32) -> Reply {
+pub fn sparked_fallout(score: u64) -> Reply {
     let fallout_scale = if score > 6 { "major" } else { "minor" };
     Reply {
         title: format!("Rolled {score} to test for fallout."),
