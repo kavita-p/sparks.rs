@@ -3,8 +3,8 @@
 
 use rand::Rng;
 
-mod interpreter;
 pub mod commands;
+mod interpreter;
 
 pub struct Rolls {
     pub max: u64,

@@ -25,7 +25,7 @@ impl EventHandler for Handler {
                 "id" => commands::id::run(&command.data.options),
                 "roll" => commands::roll::run(&command.data.options),
                 "wonderful_command" => commands::wonderful_command::run(&command.data.options),
-                _ => "not implemented".to_string()
+                _ => "not implemented".to_string(),
             };
 
             if let Err(e) = command
@@ -34,7 +34,7 @@ impl EventHandler for Handler {
                         .kind(InteractionResponseType::ChannelMessageWithSource)
                         .interaction_response_data(|message| message.content(content))
                 })
-            .await
+                .await
             {
                 println!("error: {}", e);
             }
@@ -46,43 +46,58 @@ impl EventHandler for Handler {
 
         let guild_id = GuildId(
             env::var("GUILD_ID")
-            .expect("Expected GUILD_ID in environment")
-            .parse()
-            .expect("GUILD_ID must be an integer"),
+                .expect("Expected GUILD_ID in environment")
+                .parse()
+                .expect("GUILD_ID must be an integer"),
         );
 
-        let current_commands = guild_id.get_application_commands(&ctx.http).await.expect("Should be able to retrieve commands.");
+        let current_commands = guild_id
+            .get_application_commands(&ctx.http)
+            .await
+            .expect("Should be able to retrieve commands.");
 
         for command in current_commands {
-            guild_id.delete_application_command(&ctx.http, command.id).await.expect("Should be able to delete commands.");
-        };
+            guild_id
+                .delete_application_command(&ctx.http, command.id)
+                .await
+                .expect("Should be able to delete commands.");
+        }
 
-        let commands = guild_id.set_application_commands(&ctx.http, |commands| {
+        let commands = guild_id
+            .set_application_commands(&ctx.http, |commands| {
+                commands
+                    .create_application_command(|command| commands::ping::register(command))
+                    .create_application_command(|command| commands::id::register(command))
+                    .create_application_command(|command| commands::roll::register(command))
+            })
+            .await;
+
+        println!(
+            "I now have the following guild slash commands: {:#?}",
             commands
-                .create_application_command(|command| commands::ping::register(command))
-                .create_application_command(|command| commands::id::register(command))
-                .create_application_command(|command| commands::roll::register(command))
-        })
-        .await;
+        );
 
-        println!("I now have the following guild slash commands: {:#?}", commands);
+        let current_global_commands = Command::get_global_application_commands(&ctx.http)
+            .await
+            .expect("Should be able to retrieve commands.");
 
-       let current_global_commands = Command::get_global_application_commands(&ctx.http).await.expect("Should be able to retrieve commands.");
- 
         for command in current_global_commands {
-            Command::delete_global_application_command(&ctx.http, command.id).await.expect("Should be able to delete commands.");
-        };
+            Command::delete_global_application_command(&ctx.http, command.id)
+                .await
+                .expect("Should be able to delete commands.");
+        }
 
-       let guild_command = Command::create_global_application_command(&ctx.http, |command| {
+        let guild_command = Command::create_global_application_command(&ctx.http, |command| {
             commands::wonderful_command::register(command)
         })
         .await;
 
-        println!("I created the following global slash command: {:#?}", guild_command);
+        println!(
+            "I created the following global slash command: {:#?}",
+            guild_command
+        );
     }
 }
-
-
 
 #[tokio::main]
 async fn main() {
