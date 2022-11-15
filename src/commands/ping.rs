@@ -26,6 +26,7 @@ pub fn run(_options: &[CommandDataOption]) -> DiscordMessage {
                     false,
                 ),
             ]),
+            color: None,
         }),
     }
 }

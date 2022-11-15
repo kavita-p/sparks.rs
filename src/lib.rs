@@ -1,7 +1,9 @@
 #// Cut this line when debugging dead code.
 ![cfg_attr(debug_assertions, allow(dead_code, unused_imports))]
 
+use interpreter::RollStatus;
 use rand::Rng;
+use serenity::utils::Color;
 
 pub mod commands;
 mod interpreter;
@@ -36,6 +38,7 @@ pub struct DiscordEmbed {
     pub description: Option<String>,
     // each field is a (field title, field text, inline) tuple
     pub fields: Option<Vec<(String, String, bool)>>,
+    pub color: Option<Color>,
 }
 pub struct DiscordMessage {
     pub text: Option<String>,
@@ -47,4 +50,13 @@ pub fn join_nums(nums: Vec<i64>) -> String {
         .map(|n| n.to_string())
         .collect::<Vec<String>>()
         .join(", ")
+}
+
+pub fn status_colors(status: RollStatus) -> Color {
+    match status {
+        RollStatus::Crit => Color::TEAL,
+        RollStatus::FullSuccess => Color::from_rgb(87, 242, 135),
+        RollStatus::MixedSuccess => Color::GOLD,
+        RollStatus::Failure => Color::from_rgb(237, 66, 69),
+    }
 }

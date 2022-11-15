@@ -4,7 +4,7 @@ use serenity::model::prelude::interaction::application_command::{
     CommandDataOption, CommandDataOptionValue,
 };
 
-use crate::{interpreter, DiscordMessage};
+use crate::{interpreter, status_colors, DiscordMessage};
 use crate::{roll_dice, DiscordEmbed};
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
@@ -94,6 +94,7 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, String> {
                     title: Some(message.title),
                     description: Some(message.description),
                     fields: Some(vec![("Rolls".to_string(), message.dice, true)]),
+                    color: Some(status_colors(message.status)),
                 }),
             })
         }
