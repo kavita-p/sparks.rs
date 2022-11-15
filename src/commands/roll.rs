@@ -4,7 +4,7 @@ use serenity::model::prelude::interaction::application_command::{
     CommandDataOption, CommandDataOptionValue,
 };
 
-use crate::interpreter::custom_interpreter::custom_roll;
+use crate::interpreter::custom_interpreter;
 use crate::roll_dice;
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
@@ -49,7 +49,7 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
         })
 }
 
-pub fn run(options: &[CommandDataOption]) -> String {
+pub fn run(options: &[CommandDataOption]) -> Result<String, String> {
     println!("command data options: ");
     for option in options {
         println!("{:?}", option);
@@ -63,8 +63,18 @@ pub fn run(options: &[CommandDataOption]) -> String {
     println!("{:?}", roll_opts);
 
     match roll_type.as_str() {
-        "custom" => "".to_string(),
-        "forged" => "forged".to_string(),
+        "custom" => {
+            let Some(CommandDataOptionValue::Integer(count)) = roll_opts[0].resolved else {
+                return Err("Error !".to_string());
+            };
+
+            let dice = roll_dice(count as u64, 6);
+
+            let message = custom_interpreter::custom_roll(dice, count as u64, 6);
+
+            Ok(format!("{}", message.description))
+        }
+        "forged" => Ok("forged".to_string()),
         _ => unreachable!(),
     }
 }
