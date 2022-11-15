@@ -1,11 +1,14 @@
 use crate::{
-    interpreter::{Reply, RollStatus::*},
+    interpreter::{
+        Reply,
+        RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
+    },
     Rolls,
 };
 use std::{cmp::Ordering, fmt::Write as _};
 
-pub fn pbta_move(rolls: Rolls, stat: i64) -> Reply {
-    let score: i64 = rolls.dice.iter().sum::<u64>() as i64 + stat;
+pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
+    let score = rolls.dice.iter().sum::<i64>() + stat;
 
     let (title_literal, status) = match score {
         12..=i64::MAX => ("Full success!", Crit),
@@ -22,7 +25,7 @@ pub fn pbta_move(rolls: Rolls, stat: i64) -> Reply {
             let _ = write!(description, " + {}.", stat);
         }
         Ordering::Equal => {
-            description.push_str(".");
+            description.push('.');
         }
         Ordering::Less => {
             let _ = write!(description, " - {}.", stat.saturating_abs());
@@ -62,7 +65,7 @@ mod tests {
             dice: vec![6, 6],
         };
 
-        let sparks_reply = pbta_move(rolls, 0);
+        let sparks_reply = move_roll(rolls, 0);
 
         assert_eq!(correct_reply, sparks_reply);
     }
@@ -82,7 +85,7 @@ mod tests {
             dice: vec![3, 1],
         };
 
-        let sparks_reply = pbta_move(rolls, -1);
+        let sparks_reply = move_roll(rolls, -1);
 
         assert_eq!(correct_reply, sparks_reply);
     }

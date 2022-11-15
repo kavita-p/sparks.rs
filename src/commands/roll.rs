@@ -4,7 +4,7 @@ use serenity::model::prelude::interaction::application_command::{
     CommandDataOption, CommandDataOptionValue,
 };
 
-use crate::interpreter::custom_interpreter;
+use crate::interpreter;
 use crate::roll_dice;
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
@@ -57,6 +57,10 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
         })
 }
 
+/// # Errors
+///
+/// Will return `Err` if the correct arguments aren't received. This, theoretically, shouldn't be
+/// possible unless the arguments are lost in transit between Discord and Sparks?
 pub fn run(options: &[CommandDataOption]) -> Result<String, String> {
     println!("command data options: ");
     for option in options {
@@ -80,9 +84,9 @@ pub fn run(options: &[CommandDataOption]) -> Result<String, String> {
                 return Err("Error retrieving sides!".to_string());
             };
 
-            let dice = roll_dice(count as u64, sides as u64);
+            let dice = roll_dice(count, sides);
 
-            let message = custom_interpreter::custom_roll(dice, count as u64, sides as u64);
+            let message = interpreter::custom::roll(dice, count, sides);
 
             Ok(format!("{}", message.description))
         }

@@ -7,25 +7,25 @@ pub mod commands;
 mod interpreter;
 
 pub struct Rolls {
-    pub max: u64,
-    pub min: u64,
-    pub dice: Vec<u64>,
+    pub max: i64,
+    pub min: i64,
+    pub dice: Vec<i64>,
 }
 
-pub fn roll_dice(count: u64, sides: u64) -> Rolls {
-    let mut dice: Vec<u64> = Vec::new();
-    let mut min = u64::MAX;
-    let mut max = u64::MIN;
+pub fn roll_dice(count: i64, sides: i64) -> Rolls {
+    let mut dice: Vec<i64> = Vec::new();
+    let mut min = i64::MAX;
+    let mut max = i64::MIN;
 
     for _ in 0..count {
-        let die = rand::thread_rng().gen_range(1..=sides);
-        if die < min {
-            min = die
+        let nth_die = rand::thread_rng().gen_range(1..=sides);
+        if nth_die < min {
+            min = nth_die;
         };
-        if die > max {
-            max = die
+        if nth_die > max {
+            max = nth_die;
         };
-        dice.push(die);
+        dice.push(nth_die);
     }
 
     Rolls { max, min, dice }
