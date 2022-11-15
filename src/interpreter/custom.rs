@@ -1,6 +1,6 @@
 use crate::{
     interpreter::{Reply, RollStatus},
-    Rolls,
+    join_nums, Rolls,
 };
 
 pub fn roll(rolls: Rolls, count: i64, sides: i64) -> Reply {
@@ -11,7 +11,7 @@ pub fn roll(rolls: Rolls, count: i64, sides: i64) -> Reply {
             count, sides, rolls.max, rolls.min,
         ),
         status: RollStatus::FullSuccess,
-        dice: rolls.dice,
+        dice: join_nums(rolls.dice),
     }
 }
 
@@ -25,7 +25,7 @@ mod test {
             title: String::from("7"),
             description: String::from("Rolled 2d15 (max: 7, min: 6)."),
             status: RollStatus::FullSuccess,
-            dice: vec![7, 6],
+            dice: "6, 7".to_string(),
         };
 
         let rolls = Rolls {

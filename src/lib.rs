@@ -41,3 +41,10 @@ pub struct DiscordMessage {
     pub text: Option<String>,
     pub embed: Option<DiscordEmbed>,
 }
+
+pub fn join_nums(nums: Vec<i64>) -> String {
+    nums.into_iter()
+        .map(|n| n.to_string())
+        .collect::<Vec<String>>()
+        .join(", ")
+}

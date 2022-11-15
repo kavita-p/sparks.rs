@@ -3,7 +3,7 @@ use crate::{
         Reply,
         RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
     },
-    Rolls,
+    join_nums, Rolls,
 };
 use std::{cmp::Ordering, fmt::Write as _};
 
@@ -42,7 +42,7 @@ pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
         title: String::from(title_literal),
         description,
         status,
-        dice: rolls.dice,
+        dice: join_nums(rolls.dice),
     }
 }
 

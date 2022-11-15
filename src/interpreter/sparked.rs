@@ -3,7 +3,7 @@ use crate::{
         Reply,
         RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
     },
-    Rolls,
+    join_nums, Rolls,
 };
 
 pub fn check(roll: Rolls) -> Reply {
@@ -22,7 +22,7 @@ pub fn check(roll: Rolls) -> Reply {
         title: String::from(title_literal),
         description,
         status,
-        dice: roll.dice,
+        dice: join_nums(roll.dice),
     }
 }
 
@@ -34,7 +34,7 @@ pub fn test_fallout(score: i64) -> Reply {
             "Take **{fallout_scale}** fallout if this roll is **lower** than your total stress."
         ),
         status: MixedSuccess,
-        dice: vec![score],
+        dice: score.to_string(),
     }
 }
 

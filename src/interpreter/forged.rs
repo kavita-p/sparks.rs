@@ -5,7 +5,7 @@ use crate::{
         Reply,
         RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
     },
-    Rolls,
+    join_nums, Rolls,
 };
 
 fn forged_dice(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply {
@@ -92,7 +92,7 @@ fn forged_dice(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply {
         title,
         description,
         status,
-        dice: rolls.dice,
+        dice: join_nums(rolls.dice),
     }
 }
 

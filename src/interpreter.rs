@@ -19,7 +19,7 @@ pub struct Reply {
     pub title: String,
     pub description: String,
     pub status: RollStatus,
-    pub dice: Vec<i64>,
+    pub dice: String,
 }
 
 pub mod custom;
