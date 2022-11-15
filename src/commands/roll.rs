@@ -19,7 +19,15 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                 .create_sub_option(|count_option| {
                     count_option
                         .name("count")
-                        .description("count")
+                        .description("The number of dice you'd like to roll. Can't be negative.")
+                        .kind(CommandOptionType::Integer)
+                        .required(true)
+                        .min_int_value(0)
+                })
+                .create_sub_option(|sides_option| {
+                    sides_option
+                        .name("sides")
+                        .description("The number of sides per die. Can't be negative.")
                         .kind(CommandOptionType::Integer)
                         .required(true)
                         .min_int_value(0)
@@ -65,12 +73,16 @@ pub fn run(options: &[CommandDataOption]) -> Result<String, String> {
     match roll_type.as_str() {
         "custom" => {
             let Some(CommandDataOptionValue::Integer(count)) = roll_opts[0].resolved else {
-                return Err("Error !".to_string());
+                return Err("Error retrieving count!".to_string());
             };
 
-            let dice = roll_dice(count as u64, 6);
+            let Some(CommandDataOptionValue::Integer(sides)) = roll_opts[1].resolved else {
+                return Err("Error retrieving sides!".to_string());
+            };
 
-            let message = custom_interpreter::custom_roll(dice, count as u64, 6);
+            let dice = roll_dice(count as u64, sides as u64);
+
+            let message = custom_interpreter::custom_roll(dice, count as u64, sides as u64);
 
             Ok(format!("{}", message.description))
         }
