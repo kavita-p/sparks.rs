@@ -30,3 +30,14 @@ pub fn roll_dice(count: i64, sides: i64) -> Rolls {
 
     Rolls { max, min, dice }
 }
+
+pub struct DiscordEmbed {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    // (field title, field text)
+    pub inline_fields: Option<Vec<(String, String)>>,
+}
+pub struct DiscordMessage {
+    pub text: Option<String>,
+    pub embed: Option<DiscordEmbed>,
+}

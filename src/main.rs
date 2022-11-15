@@ -11,6 +11,7 @@ use serenity::model::id::GuildId;
 use serenity::prelude::*;
 
 use sparksrs::commands;
+use sparksrs::{DiscordEmbed, DiscordMessage};
 
 struct Handler;
 
@@ -23,19 +24,38 @@ impl EventHandler for Handler {
             let content = match command.data.name.as_str() {
                 "ping" => commands::ping::run(&command.data.options),
                 "id" => commands::id::run(&command.data.options),
-                "roll" => match commands::roll::run(&command.data.options) {
-                    Ok(description) => description,
-                    Err(err) => err,
+                // "roll" => match commands::roll::run(&command.data.options) {
+                //     Ok(description) => description,
+                //     Err(err) => err,
+                // },
+                // "wonderful_command" => commands::wonderful_command::run(&command.data.options),
+                _ => DiscordMessage {
+                    text: Some("not implemented".to_string()),
+                    embed: None,
                 },
-                "wonderful_command" => commands::wonderful_command::run(&command.data.options),
-                _ => "not implemented".to_string(),
             };
 
             if let Err(e) = command
                 .create_interaction_response(&ctx.http, |response| {
                     response
                         .kind(InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|message| message.content(content))
+                        .interaction_response_data(|message| {
+                            if let Some(text) = content.text {
+                                message.content(text);
+                            };
+                            if let Some(embed) = content.embed {
+                                message.embed(|e| {
+                                    if let Some(title) = embed.title {
+                                        e.title(title);
+                                    };
+                                    if let Some(description) = embed.description {
+                                        e.description(description);
+                                    };
+                                    e
+                                });
+                            };
+                            message
+                        })
                 })
                 .await
             {

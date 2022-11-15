@@ -4,7 +4,9 @@ use serenity::model::prelude::interaction::application_command::{
     CommandDataOption, CommandDataOptionValue,
 };
 
-pub fn run(options: &[CommandDataOption]) -> String {
+use crate::DiscordMessage;
+
+pub fn run(options: &[CommandDataOption]) -> DiscordMessage {
     let option = options
         .get(0)
         .expect("Expected user option")
@@ -13,9 +15,15 @@ pub fn run(options: &[CommandDataOption]) -> String {
         .expect("Expected user object");
 
     if let CommandDataOptionValue::User(user, _member) = option {
-        format!("{}'s id is {}", user.tag(), user.id)
+        DiscordMessage {
+            text: Some(format!("{}'s id is {}", user.tag(), user.id)),
+            embed: None,
+        }
     } else {
-        "Please provide a valid user".to_string()
+        DiscordMessage {
+            text: Some("Please provide a valid user".to_string()),
+            embed: None,
+        }
     }
 }
 
