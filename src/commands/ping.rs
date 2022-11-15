@@ -9,7 +9,23 @@ pub fn run(_options: &[CommandDataOption]) -> DiscordMessage {
         embed: Some(DiscordEmbed {
             title: Some("Ping command".to_string()),
             description: Some("For testing".to_string()),
-            inline_fields: None,
+            fields: Some(vec![
+                (
+                    "Inline title 1".to_string(),
+                    "Inline description 1".to_string(),
+                    true,
+                ),
+                (
+                    "Inline title 2".to_string(),
+                    "Inline description 2".to_string(),
+                    true,
+                ),
+                (
+                    "Outline title 1".to_string(),
+                    "Outline title 2".to_string(),
+                    false,
+                ),
+            ]),
         }),
     }
 }

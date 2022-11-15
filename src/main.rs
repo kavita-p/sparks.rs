@@ -51,6 +51,9 @@ impl EventHandler for Handler {
                                     if let Some(description) = embed.description {
                                         e.description(description);
                                     };
+                                    if let Some(fields) = embed.fields {
+                                        e.fields(fields);
+                                    };
                                     e
                                 });
                             };
