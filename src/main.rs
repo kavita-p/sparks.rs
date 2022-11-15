@@ -24,10 +24,17 @@ impl EventHandler for Handler {
             let content = match command.data.name.as_str() {
                 "ping" => commands::ping::run(&command.data.options),
                 "id" => commands::id::run(&command.data.options),
-                // "roll" => match commands::roll::run(&command.data.options) {
-                //     Ok(description) => description,
-                //     Err(err) => err,
-                // },
+                "roll" => match commands::roll::run(&command.data.options) {
+                    Ok(roll) => roll,
+                    Err(err) => DiscordMessage {
+                        text: None,
+                        embed: Some(DiscordEmbed {
+                            title: Some("Error!".to_string()),
+                            description: Some("Sparks has had some kind of error message! Please report this to her page (https://yrgirlkv.itch.io/sparks), along with the command you used and any error output text.".to_string()),
+                            fields: Some(vec![("Error:".to_string(), err, true)]),
+                        }),
+                    },
+                },
                 // "wonderful_command" => commands::wonderful_command::run(&command.data.options),
                 _ => DiscordMessage {
                     text: Some("not implemented".to_string()),
