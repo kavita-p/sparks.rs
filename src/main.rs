@@ -31,7 +31,7 @@ impl EventHandler for Handler {
                         text: None,
                         embed: Some(DiscordEmbed {
                             title: Some("Error!".to_string()),
-                            description: Some("Sparks has had some kind of error message! Please report this to her page (https://yrgirlkv.itch.io/sparks), along with the command you used and any error output text.".to_string()),
+                            description: Some("Something's gone wrong! Please report this to her page (https://yrgirlkv.itch.io/sparks), along with the command you used and any error output text.".to_string()),
                             fields: Some(vec![("Error:".to_string(), err, true)]),
                             color: Some(Color::DARK_RED),
                         }),

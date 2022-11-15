@@ -99,6 +99,6 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, String> {
             })
         }
         // "forged" => Ok("forged".to_string()),
-        _ => unreachable!(),
+        _ => Err("This command has not yet been implemented.".to_string()),
     }
 }
