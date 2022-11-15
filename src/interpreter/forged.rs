@@ -1,9 +1,14 @@
 use crate::{
-    interpreter::{ForgedType, ForgedType::*, Reply, RollStatus::*},
-    Rolls,
+    interpreter::{
+        ForgedType,
+        ForgedType::{Action, Clear, Fortune, Resist},
+        Reply,
+        RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
+    },
+    join_nums, Rolls,
 };
 
-fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
+fn forged_dice(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply {
     let sixes = rolls
         .dice
         .iter()
@@ -13,10 +18,10 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
     let score = if zero_d { rolls.min } else { rolls.max };
 
     let status = if sixes > 1 {
-        if roll_type != Clear {
-            Crit
-        } else {
+        if roll_type == &Clear {
             FullSuccess
+        } else {
+            Crit
         }
     } else {
         match score {
@@ -57,36 +62,37 @@ fn forged_dice(rolls: Rolls, roll_type: ForgedType, zero_d: bool) -> Reply {
             Action => format!("Got **{sixes} sixes** on {pool}d. You take **increased effect**."),
             Resist => format!("Rolled a **critical** to resist. (Got **{}** sixes.)", sixes),
             Fortune => format!("Extreme effect, or 5 ticks on the relevant clock. Got **{sixes} sixes** on {pool}d."),
-            Clear => String::from(""),
+            Clear => String::new(),
         }
     } else {
         match roll_type {
             Action | Fortune => format!("Got **{score}** on **{pool}d**"),
             Resist => format!("6 minus your score of **{score}** on **{pool}d**"),
-            Clear => String::from(""),
+            Clear => String::new(),
         }
     };
 
     if zero_d {
-        if roll_type == Clear {
-            description.push_str("(Rolled as the lower of 2d.)\n\n")
+        if roll_type == &Clear {
+            description.push_str("(Rolled as the lower of 2d.)\n\n");
         } else {
-            description.push_str(" (rolled as the lower of 2d.)")
+            description.push_str(" (rolled as the lower of 2d.)");
         }
-    } else if sixes < 2 && roll_type != Clear {
-        description.push('.')
+    } else if sixes < 2 && roll_type != &Clear {
+        description.push('.');
     };
 
-    if roll_type == Clear {
-        description
-            .push_str("If you've cleared more stress then you currently have, you **overindulge.**")
+    if roll_type == &Clear {
+        description.push_str(
+            "If you've cleared more stress then you currently have, you **overindulge.**",
+        );
     }
 
     Reply {
         title,
         description,
         status,
-        dice: rolls.dice,
+        dice: join_nums(rolls.dice),
     }
 }
 
@@ -109,7 +115,7 @@ mod tests {
             dice: vec![6, 2, 6],
         };
 
-        let sparks_reply = forged_dice(rolls, Action, false);
+        let sparks_reply = forged_dice(rolls, &Action, false);
 
         assert_eq!(correct_reply, sparks_reply);
     }
@@ -131,7 +137,7 @@ mod tests {
             dice: vec![2, 4],
         };
 
-        let sparks_reply = forged_dice(rolls, Resist, true);
+        let sparks_reply = forged_dice(rolls, &Resist, true);
 
         assert_eq!(correct_reply, sparks_reply);
     }

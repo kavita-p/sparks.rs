@@ -19,10 +19,10 @@ pub struct Reply {
     pub title: String,
     pub description: String,
     pub status: RollStatus,
-    pub dice: Vec<u32>,
+    pub dice: String,
 }
 
-mod custom_interpreter;
-mod forged_interpreter;
-mod pbta_interpreter;
-mod sparked_interpreter;
+pub mod custom;
+pub mod forged;
+pub mod pbta;
+pub mod sparked;

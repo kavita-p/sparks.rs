@@ -1,17 +1,20 @@
 use crate::{
-    interpreter::{Reply, RollStatus::*},
-    Rolls,
+    interpreter::{
+        Reply,
+        RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
+    },
+    join_nums, Rolls,
 };
 use std::{cmp::Ordering, fmt::Write as _};
 
-pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
-    let score: i32 = rolls.dice.iter().sum::<u32>() as i32 + stat;
+pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
+    let score = rolls.dice.iter().sum::<i64>() + stat;
 
     let (title_literal, status) = match score {
-        12..=i32::MAX => ("Full success!", Crit),
+        12..=i64::MAX => ("Full success!", Crit),
         10 | 11 => ("Full success!", FullSuccess),
         7..=9 => ("Mixed success!", MixedSuccess),
-        i32::MIN..=6 => ("Failure!", Failure),
+        i64::MIN..=6 => ("Failure!", Failure),
     };
 
     let mut description = format!("Got **{}** on 2d6", score);
@@ -22,7 +25,7 @@ pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
             let _ = write!(description, " + {}.", stat);
         }
         Ordering::Equal => {
-            description.push_str(".");
+            description.push('.');
         }
         Ordering::Less => {
             let _ = write!(description, " - {}.", stat.saturating_abs());
@@ -39,7 +42,7 @@ pub fn pbta_move(rolls: Rolls, stat: i32) -> Reply {
         title: String::from(title_literal),
         description,
         status,
-        dice: rolls.dice,
+        dice: join_nums(rolls.dice),
     }
 }
 
@@ -62,7 +65,7 @@ mod tests {
             dice: vec![6, 6],
         };
 
-        let sparks_reply = pbta_move(rolls, 0);
+        let sparks_reply = move_roll(rolls, 0);
 
         assert_eq!(correct_reply, sparks_reply);
     }
@@ -82,7 +85,7 @@ mod tests {
             dice: vec![3, 1],
         };
 
-        let sparks_reply = pbta_move(rolls, -1);
+        let sparks_reply = move_roll(rolls, -1);
 
         assert_eq!(correct_reply, sparks_reply);
     }

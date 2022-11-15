@@ -1,9 +1,12 @@
 use crate::{
-    interpreter::{Reply, RollStatus::*},
-    Rolls,
+    interpreter::{
+        Reply,
+        RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
+    },
+    join_nums, Rolls,
 };
 
-pub fn sparked_check(roll: Rolls) -> Reply {
+pub fn check(roll: Rolls) -> Reply {
     let (title_literal, status) = match roll.max {
         10 => ("Critical success!", Crit),
         8 | 9 => ("Clean success!", FullSuccess),
@@ -19,11 +22,11 @@ pub fn sparked_check(roll: Rolls) -> Reply {
         title: String::from(title_literal),
         description,
         status,
-        dice: roll.dice,
+        dice: join_nums(roll.dice),
     }
 }
 
-pub fn sparked_fallout(score: u32) -> Reply {
+pub fn test_fallout(score: i64) -> Reply {
     let fallout_scale = if score > 6 { "major" } else { "minor" };
     Reply {
         title: format!("Rolled {score} to test for fallout."),
@@ -31,7 +34,7 @@ pub fn sparked_fallout(score: u32) -> Reply {
             "Take **{fallout_scale}** fallout if this roll is **lower** than your total stress."
         ),
         status: MixedSuccess,
-        dice: vec![score],
+        dice: score.to_string(),
     }
 }
 
@@ -41,7 +44,7 @@ mod tests {
 
     #[test]
     fn minor_fallout() {
-        let sparks_reply = sparked_fallout(4);
+        let sparks_reply = test_fallout(4);
 
         let correct_reply = Reply {
             title: String::from("Rolled 4 to test for fallout."),
@@ -63,7 +66,7 @@ mod tests {
             dice: vec![2, 4, 9],
         };
 
-        let sparks_reply = sparked_check(test_rolls);
+        let sparks_reply = check(test_rolls);
 
         let correct_reply = Reply {
             title: String::from("Clean success!"),
