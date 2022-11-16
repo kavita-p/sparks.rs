@@ -51,12 +51,3 @@ pub fn join_nums(nums: Vec<i64>) -> String {
         .collect::<Vec<String>>()
         .join(", ")
 }
-
-pub fn status_colors(status: RollStatus) -> Color {
-    match status {
-        RollStatus::Crit => Color::TEAL,
-        RollStatus::FullSuccess => Color::from_rgb(87, 242, 135),
-        RollStatus::MixedSuccess => Color::GOLD,
-        RollStatus::Failure => Color::from_rgb(237, 66, 69),
-    }
-}

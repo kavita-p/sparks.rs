@@ -8,7 +8,7 @@ use crate::{
     join_nums, Rolls,
 };
 
-fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply {
+pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply {
     let sixes = rolls
         .dice
         .iter()
