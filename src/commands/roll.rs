@@ -11,6 +11,8 @@ use crate::{interpreter, roll_dice, DiscordEmbed, DiscordMessage, RollStatus};
 
 // serenity has no normal green for some reason? just dark???
 const EMBED_GREEN: serenity::utils::Color = Color::from_rgb(87, 242, 135);
+// i marginally prefer discord.js' red
+const EMBED_RED: serenity::utils::Color = Color::from_rgb(237, 66, 69);
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
     command
@@ -77,6 +79,31 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                         .required(true)
                 })
         })
+        .create_option(|option| {
+            option
+                .name("sbr")
+                .description("Rolls a Sparked by Resistance check or fallout test.")
+                .kind(CommandOptionType::SubCommandGroup)
+                .create_sub_option(|check| {
+                    check
+                        .name("check")
+                        .description("Rolls d10s for a Sparked by Resistance check.")
+                        .kind(CommandOptionType::SubCommand)
+                        .create_sub_option(|pool| {
+                            pool.name("pool")
+                                .description("The size of your dice pool.")
+                                .kind(CommandOptionType::Integer)
+                                .required(true)
+                                .min_int_value(1)
+                        })
+                })
+                .create_sub_option(|fallout| {
+                    fallout
+                        .name("fallout")
+                        .description("Rolls a Sparked by Resistance fallout test.")
+                        .kind(CommandOptionType::SubCommand)
+                })
+        })
 }
 
 fn status_colors(status: RollStatus) -> Color {
@@ -84,7 +111,7 @@ fn status_colors(status: RollStatus) -> Color {
         RollStatus::Crit => Color::TEAL,
         RollStatus::FullSuccess => EMBED_GREEN,
         RollStatus::MixedSuccess => Color::GOLD,
-        RollStatus::Failure => Color::RED,
+        RollStatus::Failure => EMBED_RED,
     }
 }
 
@@ -92,7 +119,7 @@ fn status_colors(status: RollStatus) -> Color {
 ///
 /// Will return `Err` if the correct arguments aren't received. This, theoretically, shouldn't be
 /// possible unless the arguments are lost in transit between Discord and Sparks?
-pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, String> {
+pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
     println!("command data options: ");
     for option in options {
         println!("{:?}", option);
@@ -108,22 +135,22 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, String> {
     let message = match roll_type.as_str() {
         "custom" => {
             let Some(CommandDataOptionValue::Integer(count)) = roll_opts[0].resolved else {
-                return Err("Couldn't retrieve count.".to_string());
+                return Err("Couldn't retrieve count.");
             };
 
             let Some(CommandDataOptionValue::Integer(sides)) = roll_opts[1].resolved else {
-                return Err("Couldn't retrieve sides.".to_string());
+                return Err("Couldn't retrieve sides.");
             };
 
             interpreter::custom::roll(roll_dice(count, sides), count, sides)
         }
         "fitd" => {
             let Some(CommandDataOptionValue::String(typestring)) = &roll_opts[0].resolved else {
-                return Err("Couldn't retrieve type of FitD roll.".to_string());
+                return Err("Couldn't retrieve type of FitD roll.");
             };
 
             let Some(CommandDataOptionValue::Integer(userpool)) = roll_opts[1].resolved else {
-                return Err("Couldn't retrieve dice pool.".to_string());
+                return Err("Couldn't retrieve dice pool.");
             };
 
             let forged_type = match typestring.as_str() {
@@ -131,7 +158,7 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, String> {
                 "resist" => ForgedType::Resist,
                 "fortune" => ForgedType::Fortune,
                 "clear" => ForgedType::Clear,
-                _ => unreachable!(),
+                _ => return Err("Received invalid type for FitD roll."),
             };
 
             let (pool, zero_d) = {
@@ -146,13 +173,26 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, String> {
         }
         "pbta" => {
             let Some(CommandDataOptionValue::Integer(stat)) = roll_opts[0].resolved else {
-                return Err("Couldn't retrieve stat.".to_string());
+                return Err("Couldn't retrieve stat.");
             };
 
             interpreter::pbta::move_roll(roll_dice(2, 6), stat)
         }
+        "sbr" => match roll_opts[0].name.as_str() {
+            "check" => {
+                let Some(CommandDataOptionValue::Integer(pool)) = roll_opts[0].options[0].resolved else {
+                        return Err("Couldn't retrieve pool.");
+                    };
+
+                interpreter::sbr::check(roll_dice(pool, 10))
+            }
+            "fallout" => interpreter::sbr::test_fallout(roll_dice(1, 12).max),
+            _ => {
+                return Err("Received invalid subcommand for SbR roll.");
+            }
+        },
         _ => {
-            return Err("This command has not yet been implemented.".to_string());
+            return Err("This command has not yet been implemented.");
         }
     };
 
