@@ -40,8 +40,8 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
         })
         .create_option(|option| {
             option
-                .name("forged")
-                .description("forged")
+                .name("fitd")
+                .description("Rolls a Forged in the Dark roll.")
                 .kind(CommandOptionType::SubCommand)
                 .create_sub_option(|type_option| {
                     type_option
@@ -57,10 +57,24 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                 .create_sub_option(|pool_option| {
                     pool_option
                         .name("pool")
-                        .description("pool")
+                        .description("The size of your dice pool.")
                         .kind(CommandOptionType::Integer)
                         .required(true)
                         .min_int_value(0)
+                })
+        })
+        .create_option(|option| {
+            option
+                .name("pbta")
+                .description("Roll a Powered by the Apocalypse move.")
+                .kind(CommandOptionType::SubCommand)
+                .create_sub_option(|stat| {
+                    stat.name("stat")
+                        .description(
+                            "The stat you're rolling with, plus any bonuses or negative modifiers.",
+                        )
+                        .kind(CommandOptionType::Integer)
+                        .required(true)
                 })
         })
 }
@@ -94,24 +108,22 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, String> {
     let message = match roll_type.as_str() {
         "custom" => {
             let Some(CommandDataOptionValue::Integer(count)) = roll_opts[0].resolved else {
-                return Err("Couldn't retrieve count!".to_string());
+                return Err("Couldn't retrieve count.".to_string());
             };
 
             let Some(CommandDataOptionValue::Integer(sides)) = roll_opts[1].resolved else {
-                return Err("Couldn't retrieve sides!".to_string());
+                return Err("Couldn't retrieve sides.".to_string());
             };
 
-            let dice = roll_dice(count, sides);
-
-            interpreter::custom::roll(dice, count, sides)
+            interpreter::custom::roll(roll_dice(count, sides), count, sides)
         }
-        "forged" => {
+        "fitd" => {
             let Some(CommandDataOptionValue::String(typestring)) = &roll_opts[0].resolved else {
-                return Err("Couldn't retrieve type of FitD roll!".to_string());
+                return Err("Couldn't retrieve type of FitD roll.".to_string());
             };
 
-            let Some(CommandDataOptionValue::Integer(pool)) = roll_opts[1].resolved else {
-                return Err("Couldn't retrieve dice pool!".to_string());
+            let Some(CommandDataOptionValue::Integer(userpool)) = roll_opts[1].resolved else {
+                return Err("Couldn't retrieve dice pool.".to_string());
             };
 
             let forged_type = match typestring.as_str() {
@@ -122,9 +134,22 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, String> {
                 _ => unreachable!(),
             };
 
-            let dice = roll_dice(pool, 6);
+            let (pool, zero_d) = {
+                if userpool == 0 {
+                    (2, true)
+                } else {
+                    (userpool, false)
+                }
+            };
 
-            interpreter::fitd::forged_roll(dice, &forged_type, false)
+            interpreter::fitd::forged_roll(roll_dice(pool, 6), &forged_type, zero_d)
+        }
+        "pbta" => {
+            let Some(CommandDataOptionValue::Integer(stat)) = roll_opts[0].resolved else {
+                return Err("Couldn't retrieve stat.".to_string());
+            };
+
+            interpreter::pbta::move_roll(roll_dice(2, 6), stat)
         }
         _ => {
             return Err("This command has not yet been implemented.".to_string());
