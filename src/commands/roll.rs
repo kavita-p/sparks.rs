@@ -94,7 +94,7 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                                 .description("The size of your dice pool.")
                                 .kind(CommandOptionType::Integer)
                                 .required(true)
-                                .min_int_value(1)
+                                .min_int_value(0)
                         })
                 })
                 .create_sub_option(|fallout| {
@@ -180,11 +180,19 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
         }
         "sbr" => match roll_opts[0].name.as_str() {
             "check" => {
-                let Some(CommandDataOptionValue::Integer(pool)) = roll_opts[0].options[0].resolved else {
+                let Some(CommandDataOptionValue::Integer(userpool)) = roll_opts[0].options[0].resolved else {
                         return Err("Couldn't retrieve pool.");
                     };
 
-                interpreter::sbr::check(roll_dice(pool, 10))
+                let (pool, zero_d) = {
+                    if userpool == 0 {
+                        (1, true)
+                    } else {
+                        (userpool, false)
+                    }
+                };
+
+                interpreter::sbr::check(roll_dice(pool, 10), zero_d)
             }
             "fallout" => interpreter::sbr::test_fallout(roll_dice(1, 12).max),
             _ => {

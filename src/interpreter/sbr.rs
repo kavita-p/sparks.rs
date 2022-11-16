@@ -6,20 +6,33 @@ use crate::{
     join_nums, Rolls,
 };
 
-pub fn check(roll: Rolls) -> Reply {
-    let (title_literal, status) = match roll.max {
-        10 => ("Critical success!", Crit),
-        8 | 9 => ("Clean success!", FullSuccess),
-        6 | 7 => ("Strained success!", MixedSuccess),
-        2..=5 => ("Failure!", Failure),
-        1 => ("Critical failure!", Failure),
-        _ => unreachable!(),
+pub fn check(roll: Rolls, zero_d: bool) -> Reply {
+    let (title, status) = if zero_d {
+        (
+            format!("Got {} on 0d10 (rolled as 1d10.)", roll.max),
+            MixedSuccess,
+        )
+    } else {
+        let (title_literal, status) = match roll.max {
+            10 => ("Critical success!", Crit),
+            8 | 9 => ("Clean success!", FullSuccess),
+            6 | 7 => ("Strained success!", MixedSuccess),
+            2..=5 => ("Failure!", Failure),
+            1 => ("Critical failure!", Failure),
+            _ => unreachable!(),
+        };
+
+        (String::from(title_literal), status)
     };
 
-    let description = format!("Rolled **{}** on {}d10.", roll.max, roll.dice.len());
+    let description = if zero_d {
+        "You've asked for a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.".to_string()
+    } else {
+        format!("Rolled **{}** on {}d10.", roll.max, roll.dice.len())
+    };
 
     Reply {
-        title: String::from(title_literal),
+        title,
         description,
         status,
         dice: join_nums(roll.dice),
@@ -66,7 +79,7 @@ mod tests {
             dice: vec![2, 4, 9],
         };
 
-        let sparks_reply = check(test_rolls);
+        let sparks_reply = check(test_rolls, false);
 
         let correct_reply = Reply {
             title: String::from("Clean success!"),
