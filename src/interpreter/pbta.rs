@@ -56,7 +56,7 @@ mod tests {
             title: String::from("Full success!"),
             description: String::from("Got **12** on 2d6.\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable."),
             status: Crit,
-            dice: vec![6, 6]
+            dice: "6, 6".to_string()
         };
 
         let rolls = Rolls {
@@ -76,7 +76,7 @@ mod tests {
             title: String::from("Failure!"),
             description: String::from("Got **3** on 2d6 - 1."),
             status: Failure,
-            dice: vec![3, 1],
+            dice: "3, 1".to_string(),
         };
 
         let rolls = Rolls {

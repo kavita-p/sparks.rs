@@ -25,7 +25,7 @@ mod test {
             title: String::from("7"),
             description: String::from("Rolled 2d15 (max: 7, min: 6)."),
             status: RollStatus::FullSuccess,
-            dice: "6, 7".to_string(),
+            dice: "7, 6".to_string(),
         };
 
         let rolls = Rolls {

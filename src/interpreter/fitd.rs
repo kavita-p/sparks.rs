@@ -8,7 +8,7 @@ use crate::{
     join_nums, Rolls,
 };
 
-fn forged_dice(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply {
+fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply {
     let sixes = rolls
         .dice
         .iter()
@@ -106,7 +106,7 @@ mod tests {
             title: String::from("Critical success!"),
             description: String::from("Got **2 sixes** on 3d. You take **increased effect**."),
             status: Crit,
-            dice: vec![6, 2, 6],
+            dice: "6, 2, 6".to_string(),
         };
 
         let rolls = Rolls {
@@ -115,7 +115,7 @@ mod tests {
             dice: vec![6, 2, 6],
         };
 
-        let sparks_reply = forged_dice(rolls, &Action, false);
+        let sparks_reply = forged_roll(rolls, &Action, false);
 
         assert_eq!(correct_reply, sparks_reply);
     }
@@ -128,7 +128,7 @@ mod tests {
                 "6 minus your score of **2** on **0d** (rolled as the lower of 2d.)",
             ),
             status: Failure,
-            dice: vec![2, 4],
+            dice: "2, 4".to_string(),
         };
 
         let rolls = Rolls {
@@ -137,7 +137,7 @@ mod tests {
             dice: vec![2, 4],
         };
 
-        let sparks_reply = forged_dice(rolls, &Resist, true);
+        let sparks_reply = forged_roll(rolls, &Resist, true);
 
         assert_eq!(correct_reply, sparks_reply);
     }

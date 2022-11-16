@@ -52,7 +52,7 @@ mod tests {
                 "Take **minor** fallout if this roll is **lower** than your total stress.",
             ),
             status: MixedSuccess,
-            dice: vec![4],
+            dice: "4".to_string(),
         };
 
         assert_eq!(correct_reply, sparks_reply);
@@ -72,7 +72,7 @@ mod tests {
             title: String::from("Clean success!"),
             description: String::from("Rolled **9** on 3d10."),
             status: FullSuccess,
-            dice: vec![2, 4, 9],
+            dice: "2, 4, 9".to_string(),
         };
 
         assert_eq!(correct_reply, sparks_reply);
