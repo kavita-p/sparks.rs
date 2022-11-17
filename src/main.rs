@@ -39,8 +39,13 @@ impl EventHandler for Handler {
                 },
                 // "wonderful_command" => commands::wonderful_command::run(&command.data.options),
                 _ => DiscordMessage {
-                    text: Some("not implemented".to_string()),
-                    embed: None,
+                    text: None,
+                    embed: Some(DiscordEmbed {
+                        title: Some("Error".to_string()),
+                        description: Some("Something's gone wrong with Sparks! Please report this to her page (https://yrgirlkv.itch.io/sparks), along with the command you used and any error output text.".to_string()),
+                        fields: Some(vec![("Error:".to_string(), "Received unknown command".to_string(), true)]),
+                        color: Some(Color::DARK_RED),
+                    }),
                 },
             };
 
