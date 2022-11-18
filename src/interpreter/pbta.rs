@@ -33,7 +33,8 @@ pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
 
     if score >= 12 {
         description.push_str(
-            "\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable.",
+            "\n\nYou also gain any bonuses that trigger on a \
+            **12+** for this move, if applicable.",
         );
     }
 
@@ -49,6 +50,26 @@ pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
 mod tests {
     use super::*;
     use pretty_assertions::assert_eq;
+
+    #[test]
+    fn positive_stat() {
+        let correct_reply = Reply {
+            title: String::from("Mixed success!"),
+            description: String::from("Got **9** on 2d6 + 2."),
+            status: MixedSuccess,
+            dice: "3, 4".to_string(),
+        };
+
+        let rolls = Rolls {
+            max: 3,
+            min: 4,
+            dice: vec![3, 4],
+        };
+
+        let sparks_reply = move_roll(rolls, 2);
+
+        assert_eq!(correct_reply, sparks_reply);
+    }
 
     #[test]
     fn no_stat() {
