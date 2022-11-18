@@ -51,3 +51,20 @@ pub fn join_nums(nums: Vec<i64>) -> String {
         .collect::<Vec<String>>()
         .join(", ")
 }
+
+impl Rolls {
+    pub fn strike_and_join_dice(self, dropped_max: i64, mut drop_count: i32) -> String {
+        self.dice
+            .into_iter()
+            .map(|n| {
+                if n >= dropped_max && drop_count > 0 {
+                    drop_count -= 1;
+                    format!("~~{}~~", n)
+                } else {
+                    n.to_string()
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(", ")
+    }
+}
