@@ -21,14 +21,13 @@ pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
 
     match stat.cmp(&0) {
         Ordering::Greater => {
-            // `write!` could hypothetically return an error, but its return value is unneeded.
-            let _ = write!(description, " + {}.", stat);
+            description.push_str(&format!(" + {}.", stat));
         }
         Ordering::Equal => {
             description.push('.');
         }
         Ordering::Less => {
-            let _ = write!(description, " - {}.", stat.saturating_abs());
+            description.push_str(&format!(" - {}.", stat.saturating_abs()));
         }
     };
 

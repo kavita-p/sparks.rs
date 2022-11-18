@@ -84,9 +84,11 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
 pub fn test_fallout(score: i64) -> Reply {
     let fallout_scale = if score > 6 { "major" } else { "minor" };
     Reply {
-        title: format!("Rolled {score} to test for fallout."),
+        title: format!("Rolled {} to test for fallout.", score),
         description: format!(
-            "Take **{fallout_scale}** fallout if this roll is **lower** than your total stress."
+            "Take **{}** fallout if this roll is \
+            **lower** than your total stress.",
+            fallout_scale
         ),
         status: MixedSuccess,
         dice: score.to_string(),
