@@ -6,14 +6,14 @@ use crate::{
     join_nums, Rolls,
 };
 
-pub fn check(roll: Rolls, zero_d: bool) -> Reply {
+pub fn check(rolls: Rolls, zero_d: bool) -> Reply {
     let (title, status) = if zero_d {
         (
-            format!("Got {} on 0d10 (rolled as 1d10.)", roll.max),
+            format!("Got {} on 0d10 (rolled as 1d10.)", rolls.max),
             MixedSuccess,
         )
     } else {
-        let (title_literal, status) = match roll.max {
+        let (title_literal, status) = match rolls.max {
             10 => ("Critical success!", Crit),
             8 | 9 => ("Clean success!", FullSuccess),
             6 | 7 => ("Strained success!", MixedSuccess),
@@ -28,14 +28,14 @@ pub fn check(roll: Rolls, zero_d: bool) -> Reply {
     let description = if zero_d {
         "You've asked for a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.".to_string()
     } else {
-        format!("Rolled **{}** on {}d10.", roll.max, roll.dice.len())
+        format!("Rolled **{}** on {}d10.", rolls.max, rolls.dice.len())
     };
 
     Reply {
         title,
         description,
         status,
-        dice: join_nums(roll.dice),
+        dice: join_nums(rolls.dice),
     }
 }
 
