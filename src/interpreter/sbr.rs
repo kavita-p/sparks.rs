@@ -6,14 +6,30 @@ use crate::{
     join_nums, Rolls,
 };
 
-pub fn check(rolls: Rolls, zero_d: bool) -> Reply {
-    let (title, status) = if zero_d {
+pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
+    let drop_count = match danger {
+        Some("risky") => 1,
+        Some("desperate") => 2,
+        _ => 0,
+    };
+
+    println!("{:?}", danger);
+
+    let dropped_max = if drop_count > 0 {
+        let mut sorted_dice = rolls.dice.clone();
+        sorted_dice.sort();
+        sorted_dice[sorted_dice.len() - (1 + drop_count) as usize]
+    } else {
+        rolls.max
+    };
+
+    let (title, status) = if zero_d || drop_count >= rolls.dice.len() {
         (
-            format!("Got {} on 0d10 (rolled as 1d10.)", rolls.max),
+            format!("Got {} on 0d10 (rolled as 1d10.)", dropped_max),
             MixedSuccess,
         )
     } else {
-        let (title_literal, status) = match rolls.max {
+        let (title_literal, status) = match dropped_max {
             10 => ("Critical success!", Crit),
             8 | 9 => ("Clean success!", FullSuccess),
             6 | 7 => ("Strained success!", MixedSuccess),
@@ -25,17 +41,35 @@ pub fn check(rolls: Rolls, zero_d: bool) -> Reply {
         (String::from(title_literal), status)
     };
 
-    let description = if zero_d {
-        "You've asked for a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.".to_string()
+    let description = if drop_count >= rolls.dice.len() && drop_count != 0 {
+        format!(
+            "Your **{}** {}d check counts as a 0d roll! \
+            Each Sparked by Resistance system handles these rolls differently.\
+            You should consult the rules for your particular game to \
+            interpret these results. \
+            You can use `/roll custom` if you need additional dice.",
+            match danger {
+                Some(danger) => danger,
+                None => unreachable!(),
+            },
+            rolls.dice.len()
+        )
+    } else if zero_d {
+        "You've asked for a 0d roll!\
+            Each Sparked by Resistance system handles these rolls differently.\
+            You should consult the rules for your particular game to \
+            interpret these results. \
+            You can use `/roll custom` if you need additional dice."
+            .to_string()
     } else {
-        format!("Rolled **{}** on {}d10.", rolls.max, rolls.dice.len())
+        format!("Rolled **{}** on {}d10.", dropped_max, rolls.dice.len())
     };
 
     Reply {
         title,
         description,
         status,
-        dice: join_nums(rolls.dice),
+        dice: rolls.strike_and_join_dice(drop_count as i32),
     }
 }
 
@@ -79,13 +113,33 @@ mod tests {
             dice: vec![2, 4, 9],
         };
 
-        let sparks_reply = check(test_rolls, false);
+        let sparks_reply = check(test_rolls, false, None);
 
         let correct_reply = Reply {
             title: String::from("Clean success!"),
             description: String::from("Rolled **9** on 3d10."),
             status: FullSuccess,
             dice: "2, 4, 9".to_string(),
+        };
+
+        assert_eq!(correct_reply, sparks_reply);
+    }
+
+    #[test]
+    fn skill_check_with_drop() {
+        let test_rolls = Rolls {
+            max: 9,
+            min: 2,
+            dice: vec![2, 4, 6, 9],
+        };
+
+        let sparks_reply = check(test_rolls, false, Some("risky"));
+
+        let correct_reply = Reply {
+            title: String::from("Strained success!"),
+            description: String::from("Rolled **6** on 4d10."),
+            status: MixedSuccess,
+            dice: "2, 4, 6, ~~9~~".to_string(),
         };
 
         assert_eq!(correct_reply, sparks_reply);

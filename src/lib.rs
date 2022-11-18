@@ -53,15 +53,38 @@ pub fn join_nums(nums: Vec<i64>) -> String {
 }
 
 impl Rolls {
-    pub fn strike_and_join_dice(self, dropped_max: i64, mut drop_count: i32) -> String {
-        self.dice
+    pub fn strike_and_join_dice(self, drop_count: i32) -> String {
+        let mut largest_dice = self
+            .dice
             .into_iter()
-            .map(|n| {
-                if n >= dropped_max && drop_count > 0 {
-                    drop_count -= 1;
-                    format!("~~{}~~", n)
+            .enumerate()
+            .collect::<Vec<(usize, i64)>>();
+        largest_dice.sort_by(|a, b| b.1.cmp(&a.1));
+
+        println!("{:?}", largest_dice);
+
+        let mut marked_dice = largest_dice
+            .into_iter()
+            .enumerate()
+            .map(|(pos, (idx, val))| {
+                if pos < drop_count as usize {
+                    (idx, val, true)
                 } else {
-                    n.to_string()
+                    (idx, val, false)
+                }
+            })
+            .collect::<Vec<(usize, i64, bool)>>();
+        marked_dice.sort_by(|a, b| a.0.cmp(&b.0));
+
+        println!("{:?}", marked_dice);
+
+        marked_dice
+            .into_iter()
+            .map(|(_idx, val, strike)| {
+                if strike {
+                    format!("~~{}~~", val)
+                } else {
+                    val.to_string()
                 }
             })
             .collect::<Vec<String>>()
