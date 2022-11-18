@@ -92,7 +92,7 @@ pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply 
         title,
         description,
         status,
-        dice: join_nums(rolls.dice),
+        dice: rolls.join_dice(),
     }
 }
 

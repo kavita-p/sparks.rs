@@ -11,7 +11,7 @@ pub fn roll(rolls: Rolls, count: i64, sides: i64) -> Reply {
             count, sides, rolls.max, rolls.min,
         ),
         status: RollStatus::FullSuccess,
-        dice: join_nums(rolls.dice),
+        dice: rolls.join_dice(),
     }
 }
 

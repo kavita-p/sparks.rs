@@ -42,7 +42,7 @@ pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
         title: String::from(title_literal),
         description,
         status,
-        dice: join_nums(rolls.dice),
+        dice: rolls.join_dice(),
     }
 }
 

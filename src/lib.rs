@@ -45,14 +45,15 @@ pub struct DiscordMessage {
     pub embed: Option<DiscordEmbed>,
 }
 
-pub fn join_nums(nums: Vec<i64>) -> String {
-    nums.into_iter()
-        .map(|n| n.to_string())
-        .collect::<Vec<String>>()
-        .join(", ")
-}
-
 impl Rolls {
+    pub fn join_dice(self) -> String {
+        self.dice
+            .into_iter()
+            .map(|d| d.to_string())
+            .collect::<Vec<String>>()
+            .join(", ")
+    }
+
     pub fn strike_and_join_dice(self, drop_count: i32) -> String {
         let mut largest_dice = self
             .dice
@@ -60,8 +61,6 @@ impl Rolls {
             .enumerate()
             .collect::<Vec<(usize, i64)>>();
         largest_dice.sort_by(|a, b| b.1.cmp(&a.1));
-
-        println!("{:?}", largest_dice);
 
         let mut marked_dice = largest_dice
             .into_iter()
@@ -75,8 +74,6 @@ impl Rolls {
             })
             .collect::<Vec<(usize, i64, bool)>>();
         marked_dice.sort_by(|a, b| a.0.cmp(&b.0));
-
-        println!("{:?}", marked_dice);
 
         marked_dice
             .into_iter()
