@@ -1,6 +1,6 @@
 use crate::{
     interpreter::{Reply, RollStatus},
-    join_nums, Rolls,
+    Rolls,
 };
 
 pub fn roll(rolls: Rolls, count: i64, sides: i64) -> Reply {

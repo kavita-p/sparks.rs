@@ -3,7 +3,7 @@ use crate::{
         Reply,
         RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
     },
-    join_nums, Rolls,
+    Rolls,
 };
 use std::{cmp::Ordering, fmt::Write as _};
 

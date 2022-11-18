@@ -3,7 +3,7 @@ use crate::{
         Reply,
         RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
     },
-    join_nums, Rolls,
+    Rolls,
 };
 
 pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
@@ -12,8 +12,6 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
         Some("desperate") => 2,
         _ => 0,
     };
-
-    println!("{:?}", danger);
 
     let dropped_max = if drop_count > 0 {
         let mut sorted_dice = rolls.dice.clone();
@@ -62,7 +60,17 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
             You can use `/roll custom` if you need additional dice."
             .to_string()
     } else {
-        format!("Rolled **{}** on {}d10.", dropped_max, rolls.dice.len())
+        if let Some(danger_level) = danger {
+            format!(
+                "Rolled **{}** on {} {}d10 (dropped {}d.)",
+                dropped_max,
+                danger_level,
+                rolls.dice.len(),
+                drop_count
+            )
+        } else {
+            format!("Rolled **{}** on {}d10.", dropped_max, rolls.dice.len())
+        }
     };
 
     Reply {
@@ -138,7 +146,7 @@ mod tests {
 
         let correct_reply = Reply {
             title: String::from("Strained success!"),
-            description: String::from("Rolled **6** on 4d10."),
+            description: String::from("Rolled **6** on risky 4d10 (dropped 1d.)"),
             status: MixedSuccess,
             dice: "2, 4, 6, ~~9~~".to_string(),
         };
@@ -151,16 +159,16 @@ mod tests {
         let test_rolls = Rolls {
             max: 10,
             min: 2,
-            dice: vec![10, 4, 2, 10],
+            dice: vec![10, 4, 10, 10],
         };
 
-        let sparks_reply = check(test_rolls, false, Some("risky"));
+        let sparks_reply = check(test_rolls, false, Some("desperate"));
 
         let correct_reply = Reply {
             title: String::from("Critical success!"),
-            description: String::from("Rolled **10** on 4d10."),
+            description: String::from("Rolled **10** on desperate 4d10 (dropped 2d.)"),
             status: Crit,
-            dice: "~~10~~, 4, 2, 10".to_string(),
+            dice: "~~10~~, 4, ~~10~~, 10".to_string(),
         };
 
         assert_eq!(correct_reply, sparks_reply);

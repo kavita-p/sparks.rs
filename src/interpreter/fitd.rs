@@ -5,7 +5,7 @@ use crate::{
         Reply,
         RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
     },
-    join_nums, Rolls,
+    Rolls,
 };
 
 pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply {
