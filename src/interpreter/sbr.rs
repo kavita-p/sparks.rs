@@ -88,6 +88,7 @@ pub fn test_fallout(score: i64) -> Reply {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn minor_fallout() {
@@ -140,6 +141,26 @@ mod tests {
             description: String::from("Rolled **6** on 4d10."),
             status: MixedSuccess,
             dice: "2, 4, 6, ~~9~~".to_string(),
+        };
+
+        assert_eq!(correct_reply, sparks_reply);
+    }
+
+    #[test]
+    fn skill_check_crit_with_drop() {
+        let test_rolls = Rolls {
+            max: 10,
+            min: 2,
+            dice: vec![10, 4, 2, 10],
+        };
+
+        let sparks_reply = check(test_rolls, false, Some("risky"));
+
+        let correct_reply = Reply {
+            title: String::from("Critical success!"),
+            description: String::from("Rolled **10** on 4d10."),
+            status: Crit,
+            dice: "~~10~~, 4, 2, 10".to_string(),
         };
 
         assert_eq!(correct_reply, sparks_reply);

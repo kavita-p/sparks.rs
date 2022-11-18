@@ -96,6 +96,15 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                                 .required(true)
                                 .min_int_value(0)
                         })
+                        .create_sub_option(|danger| {
+                            danger
+                                .name("danger")
+                                .description("Whether the check is risky or desperate.")
+                                .kind(CommandOptionType::String)
+                                .required(false)
+                                .add_string_choice("risky", "risky")
+                                .add_string_choice("desperate", "desperate")
+                        })
                 })
                 .create_sub_option(|fallout| {
                     fallout
@@ -120,17 +129,17 @@ fn status_colors(status: RollStatus) -> Color {
 /// Will return `Err` if the correct arguments aren't received. This, theoretically, shouldn't be
 /// possible unless the arguments are lost in transit between Discord and Sparks?
 pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
-    println!("command data options: ");
-    for option in options {
-        println!("{:?}", option);
-    }
+    // println!("command data options: ");
+    // for option in options {
+    //     println!("{:?}", option);
+    // }
 
     let roll_type = &options[0].name;
 
     let roll_opts = &options[0].options;
 
-    println!("roll_opts:");
-    println!("{:?}", roll_opts);
+    // println!("roll_opts:");
+    // println!("{:#?}", roll_opts);
 
     let message = match roll_type.as_str() {
         "custom" => {
@@ -192,7 +201,17 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
                     }
                 };
 
-                interpreter::sbr::check(roll_dice(pool, 10), zero_d)
+                let danger = match roll_opts.get(1) {
+                    Some(command) => match &command.resolved {
+                        Some(CommandDataOptionValue::String(danger_level)) => {
+                            Some(danger_level.as_str())
+                        }
+                        _ => return Err("Received danger option but did not get a value."),
+                    },
+                    None => None,
+                };
+
+                interpreter::sbr::check(roll_dice(pool, 10), zero_d, danger)
             }
             "fallout" => interpreter::sbr::test_fallout(roll_dice(1, 12).max),
             _ => {

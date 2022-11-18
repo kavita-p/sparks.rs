@@ -49,6 +49,7 @@ pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn no_stat() {
