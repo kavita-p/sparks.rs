@@ -118,7 +118,7 @@ mod tests {
 
         let sparks_reply = forged_roll(rolls, &Action, false);
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 
     #[test]
@@ -140,6 +140,6 @@ mod tests {
 
         let sparks_reply = forged_roll(rolls, &Resist, true);
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 }

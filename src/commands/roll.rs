@@ -201,15 +201,22 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
                     }
                 };
 
-                let danger = match roll_opts.get(1) {
-                    Some(command) => match &command.resolved {
-                        Some(CommandDataOptionValue::String(danger_level)) => {
-                            Some(danger_level.as_str())
+                println!("{:#?}", roll_opts[0]);
+
+                let danger = match roll_opts[0].options.get(1) {
+                    Some(command) => {
+                        println!("{:?}", command);
+                        match &command.resolved {
+                            Some(CommandDataOptionValue::String(danger_level)) => {
+                                Some(danger_level.as_str())
+                            }
+                            _ => return Err("Received danger option but did not get a value."),
                         }
-                        _ => return Err("Received danger option but did not get a value."),
-                    },
+                    }
                     None => None,
                 };
+
+                println!("{:?}", danger);
 
                 interpreter::sbr::check(roll_dice(pool, 10), zero_d, danger)
             }

@@ -13,17 +13,30 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
         _ => 0,
     };
 
-    let dropped_max = if drop_count > 0 {
+    let dropped_max = if drop_count > 0 && drop_count < rolls.dice.len() {
         let mut sorted_dice = rolls.dice.clone();
-        sorted_dice.sort();
-        sorted_dice[sorted_dice.len() - (1 + drop_count) as usize]
+        sorted_dice.sort_by(|a, b| b.cmp(a));
+        sorted_dice[(drop_count) as usize]
     } else {
         rolls.max
     };
 
-    let (title, status) = if zero_d || drop_count >= rolls.dice.len() {
+    let (title, status) = if zero_d {
         (
             format!("Got {} on 0d10 (rolled as 1d10.)", dropped_max),
+            MixedSuccess,
+        )
+    } else if drop_count >= rolls.dice.len() {
+        (
+            format!(
+                "Got {} on {} {}d10.",
+                dropped_max,
+                match danger {
+                    Some(danger) => danger,
+                    None => unreachable!(),
+                },
+                rolls.dice.len()
+            ),
             MixedSuccess,
         )
     } else {
@@ -39,26 +52,20 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
         (String::from(title_literal), status)
     };
 
+    let zero_d_text = "Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.";
+
     let description = if drop_count >= rolls.dice.len() && drop_count != 0 {
         format!(
-            "Your **{}** {}d check counts as a 0d roll! \
-            Each Sparked by Resistance system handles these rolls differently.\
-            You should consult the rules for your particular game to \
-            interpret these results. \
-            You can use `/roll custom` if you need additional dice.",
+            "Your **{}** {}d check counts as a 0d roll! {}",
             match danger {
                 Some(danger) => danger,
                 None => unreachable!(),
             },
-            rolls.dice.len()
+            rolls.dice.len(),
+            zero_d_text
         )
     } else if zero_d {
-        "You've asked for a 0d roll!\
-            Each Sparked by Resistance system handles these rolls differently.\
-            You should consult the rules for your particular game to \
-            interpret these results. \
-            You can use `/roll custom` if you need additional dice."
-            .to_string()
+        format!("You've asked for a 0d roll! {}", zero_d_text).to_string()
     } else {
         if let Some(danger_level) = danger {
             format!(
@@ -113,7 +120,7 @@ mod tests {
             dice: "4".to_string(),
         };
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 
     #[test]
@@ -133,7 +140,7 @@ mod tests {
             dice: "2, 4, 9".to_string(),
         };
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 
     #[test]
@@ -153,7 +160,7 @@ mod tests {
             dice: "2, 4, 6, ~~9~~".to_string(),
         };
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 
     #[test]
@@ -173,6 +180,26 @@ mod tests {
             dice: "~~10~~, 4, ~~10~~, 10".to_string(),
         };
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
+    }
+
+    #[test]
+    fn check_drop_to_zero() {
+        let test_rolls = Rolls {
+            max: 8,
+            min: 7,
+            dice: vec![8, 7],
+        };
+
+        let sparks_reply = check(test_rolls, false, Some("desperate"));
+
+        let correct_reply = Reply {
+            title: String::from("Got 8 on desperate 2d10."),
+            description: String::from("Your **desperate** 2d check counts as a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice."),
+            status: MixedSuccess,
+            dice: "~~8~~, ~~7~~".to_string(),
+        };
+
+        assert_eq!(sparks_reply, correct_reply);
     }
 }

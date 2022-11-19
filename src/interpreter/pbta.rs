@@ -68,7 +68,7 @@ mod tests {
 
         let sparks_reply = move_roll(rolls, 2);
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 
     #[test]
@@ -88,7 +88,7 @@ mod tests {
 
         let sparks_reply = move_roll(rolls, 0);
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 
     #[test]
@@ -108,6 +108,6 @@ mod tests {
 
         let sparks_reply = move_roll(rolls, -1);
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 }

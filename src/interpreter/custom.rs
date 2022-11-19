@@ -37,6 +37,6 @@ mod test {
 
         let sparks_reply = roll(rolls, 2, 15);
 
-        assert_eq!(correct_reply, sparks_reply);
+        assert_eq!(sparks_reply, correct_reply);
     }
 }
