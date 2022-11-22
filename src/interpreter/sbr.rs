@@ -65,7 +65,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
             zero_d_text
         )
     } else if zero_d {
-        format!("You've asked for a 0d roll! {}", zero_d_text).to_string()
+        format!("You've asked for a 0d roll! {}", zero_d_text)
     } else {
         if let Some(danger_level) = danger {
             format!(

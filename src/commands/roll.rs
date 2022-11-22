@@ -170,19 +170,12 @@ fn status_colors(status: RollStatus) -> Color {
 /// Will return `Err` if the correct arguments aren't received, or will propagate errors up from
 /// within an interpreter function. Strictly speaking these errors shouldn't be possible (either
 /// the logic will never reach them or else command args would have to get lost between Discord and
-/// Sparks), but they are accounted for anyway just in case.
+/// Sparks), but they're accounted for just in case.
 pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
-    // println!("command data options: ");
-    // for option in options {
-    //     println!("{:?}", option);
-    // }
 
     let roll_type = &options[0].name;
 
     let roll_opts = &options[0].options;
-
-    // println!("roll_opts:");
-    // println!("{:#?}", roll_opts);
 
     let message = match roll_type.as_str() {
         "custom" => {
@@ -265,7 +258,6 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
             }
         },
         "wild" => {
-            println!("{:#?}", &roll_opts);
             let Some(CommandDataOptionValue::String(typestring)) = &roll_opts[0].resolved else {
                 return Err("Couldn't retrieve type of Wild Words roll.");
             };
@@ -276,7 +268,6 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
 
             let cut = match roll_opts.get(2) {
                 Some(command) => {
-                    println!("{:?}", command);
                     match &command.resolved {
                         Some(CommandDataOptionValue::Integer(user_cut)) => {
                             Some(*user_cut)

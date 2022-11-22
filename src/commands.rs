@@ -1,4 +1,4 @@
-pub mod id;
-pub mod ping;
+pub mod buzz;
+pub mod flicker;
 pub mod roll;
-pub mod wonderful_command;
+pub mod help;

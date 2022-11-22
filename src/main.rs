@@ -23,8 +23,8 @@ impl EventHandler for Handler {
             println!("Received command interaction: {:#?}", command);
 
             let content = match command.data.name.as_str() {
-                "ping" => commands::ping::run(&command.data.options),
-                "id" => commands::id::run(&command.data.options),
+                "buzz" => commands::buzz::run(&command.data.options),
+                "flicker" => commands::flicker::run(&command.data.options),
                 "roll" => match commands::roll::run(&command.data.options) {
                     Ok(roll) => roll,
                     Err(err) => DiscordMessage {
@@ -37,7 +37,6 @@ impl EventHandler for Handler {
                         }),
                     },
                 },
-                // "wonderful_command" => commands::wonderful_command::run(&command.data.options),
                 _ => DiscordMessage {
                     text: None,
                     embed: Some(DiscordEmbed {
@@ -108,10 +107,7 @@ impl EventHandler for Handler {
 
         let commands = guild_id
             .set_application_commands(&ctx.http, |commands| {
-                commands
-                    .create_application_command(|command| commands::ping::register(command))
-                    .create_application_command(|command| commands::id::register(command))
-                    .create_application_command(|command| commands::roll::register(command))
+                commands.create_application_command(|command| command)
             })
             .await;
 
@@ -130,14 +126,17 @@ impl EventHandler for Handler {
                 .expect("Should be able to delete commands.");
         }
 
-        let guild_command = Command::create_global_application_command(&ctx.http, |command| {
-            commands::wonderful_command::register(command)
+        let global_command = Command::set_global_application_commands(&ctx.http, |command| {
+            command
+                .create_application_command(|command| commands::buzz::register(command))
+                .create_application_command(|command| commands::flicker::register(command))
+                .create_application_command(|command| commands::roll::register(command))
         })
         .await;
 
         println!(
-            "I created the following global slash command: {:#?}",
-            guild_command
+            "I created the following global slash commands: {:#?}",
+            global_command
         );
     }
 }

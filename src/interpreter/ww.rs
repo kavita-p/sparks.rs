@@ -120,7 +120,7 @@ pub fn wild_roll(
             }
         }
         Crit => return Err("Description received invalid success type for system.")
-    }.into();
+    }.to_string();
 
     if doubles && !special_roll {
         description += match roll_type {
@@ -130,7 +130,7 @@ pub fn wild_roll(
             Acquisition => "\n\n**Twist**\nGain a resource with a unique or positive tag suggested by you or another player.",
             Creation => "\n\n**Twist**\nCreation has small, unexpected benefit in addition to the usual result.",
             Recovery => "\n\n**Twist**\nYou don't consume the resource used to carry out your recovery.",
-            Ratings => "\n\n**Twist**\nAn unexpected event in addition to the result.", 
+            Ratings => "\n\n**Twist**\nAn unexpected event in addition to the result.",
             _ => return Err("Tried to add twist to watch or weather-watching roll."),
         }
     }

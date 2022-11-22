@@ -107,7 +107,7 @@ mod tests {
             title: String::from("Critical success!"),
             description: String::from("Got **2 sixes** on 3d. You take **increased effect**."),
             status: Crit,
-            dice: "6, 2, 6".to_string(),
+            dice: "6, 2, 6".into(),
         };
 
         let rolls = Rolls {
@@ -129,7 +129,7 @@ mod tests {
                 "6 minus your score of **2** on **0d** (rolled as the lower of 2d.)",
             ),
             status: Failure,
-            dice: "2, 4".to_string(),
+            dice: "2, 4".into(),
         };
 
         let rolls = Rolls {

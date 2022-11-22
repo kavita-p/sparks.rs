@@ -57,7 +57,7 @@ mod tests {
             title: String::from("Mixed success!"),
             description: String::from("Got **9** on 2d6 + 2."),
             status: MixedSuccess,
-            dice: "3, 4".to_string(),
+            dice: "3, 4".into(),
         };
 
         let rolls = Rolls {
@@ -77,7 +77,7 @@ mod tests {
             title: String::from("Full success!"),
             description: String::from("Got **12** on 2d6.\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable."),
             status: Crit,
-            dice: "6, 6".to_string()
+            dice: "6, 6".into()
         };
 
         let rolls = Rolls {
@@ -97,7 +97,7 @@ mod tests {
             title: String::from("Failure!"),
             description: String::from("Got **3** on 2d6 - 1."),
             status: Failure,
-            dice: "3, 1".to_string(),
+            dice: "3, 1".into(),
         };
 
         let rolls = Rolls {
