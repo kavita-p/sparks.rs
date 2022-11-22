@@ -13,3 +13,7 @@ jobs:
         with:
           command: build
           args: --release
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sparksrs
+          path: target/release/sparksrs
