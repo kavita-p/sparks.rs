@@ -1,6 +1,9 @@
 #// Cut this line when debugging dead code.
 ![cfg_attr(debug_assertions, allow(dead_code, unused_imports))]
 
+use std::collections::HashSet;
+use std::hash::Hash;
+
 use interpreter::RollStatus;
 use rand::Rng;
 use serenity::utils::Color;
@@ -33,18 +36,6 @@ pub fn roll_dice(count: i64, sides: i64) -> Rolls {
     Rolls { max, min, dice }
 }
 
-pub struct DiscordEmbed {
-    pub title: Option<String>,
-    pub description: Option<String>,
-    // each field is a (field title, field text, inline) tuple
-    pub fields: Option<Vec<(String, String, bool)>>,
-    pub color: Option<Color>,
-}
-pub struct DiscordMessage {
-    pub text: Option<String>,
-    pub embed: Option<DiscordEmbed>,
-}
-
 impl Rolls {
     pub fn join_dice(self) -> String {
         self.dice
@@ -54,7 +45,7 @@ impl Rolls {
             .join(", ")
     }
 
-    pub fn strike_and_join_dice(self, drop_count: i32) -> String {
+    pub fn strike_and_join_dice(self, drop_count: i64) -> String {
         let mut largest_dice = self
             .dice
             .into_iter()
@@ -86,5 +77,47 @@ impl Rolls {
             })
             .collect::<Vec<String>>()
             .join(", ")
+    }
+}
+
+pub struct DiscordEmbed {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    // each field is a (field title, field text, inline) tuple
+    pub fields: Option<Vec<(String, String, bool)>>,
+    pub color: Option<Color>,
+}
+pub struct DiscordMessage {
+    pub text: Option<String>,
+    pub embed: Option<DiscordEmbed>,
+}
+
+// utils
+
+fn has_unique_elements<T>(iter: T) -> bool
+where
+    T: IntoIterator,
+    T::Item: Eq + Hash,
+{
+    let mut uniq = HashSet::new();
+    iter.into_iter().all(move |x| uniq.insert(x))
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn check_doubles() {
+        let vec_with_doubles = vec![1, 2, 4, 4];
+
+        assert!(!has_unique_elements(vec_with_doubles));
+    }
+
+    #[test]
+    fn check_no_doubles() {
+        let vec_without_doubles = vec![1, 2, 3, 4];
+
+        assert!(has_unique_elements(vec_without_doubles));
     }
 }

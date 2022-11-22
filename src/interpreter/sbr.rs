@@ -6,7 +6,7 @@ use crate::{
     Rolls,
 };
 
-pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
+pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, &str> {
     let drop_count = match danger {
         Some("risky") => 1,
         Some("desperate") => 2,
@@ -33,7 +33,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
                 dropped_max,
                 match danger {
                     Some(danger) => danger,
-                    None => unreachable!(),
+                    None => return Err("Told to drop dice, but didn't receive a danger level!"),
                 },
                 rolls.dice.len()
             ),
@@ -46,7 +46,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
             6 | 7 => ("Strained success!", MixedSuccess),
             2..=5 => ("Failure!", Failure),
             1 => ("Critical failure!", Failure),
-            _ => unreachable!(),
+            _ => return Err("Dice value of out range."),
         };
 
         (String::from(title_literal), status)
@@ -59,7 +59,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
             "Your **{}** {}d check counts as a 0d roll! {}",
             match danger {
                 Some(danger) => danger,
-                None => unreachable!(),
+                None => return Err("Told to drop dice, but didn't receive a danger level count."),
             },
             rolls.dice.len(),
             zero_d_text
@@ -80,12 +80,12 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Reply {
         }
     };
 
-    Reply {
+    Ok(Reply {
         title,
         description,
         status,
-        dice: rolls.strike_and_join_dice(drop_count as i32),
-    }
+        dice: rolls.strike_and_join_dice(drop_count as i64),
+    })
 }
 
 pub fn test_fallout(score: i64) -> Reply {
@@ -133,12 +133,12 @@ mod tests {
 
         let sparks_reply = check(test_rolls, false, None);
 
-        let correct_reply = Reply {
+        let correct_reply = Ok(Reply {
             title: String::from("Clean success!"),
             description: String::from("Rolled **9** on 3d10."),
             status: FullSuccess,
             dice: "2, 4, 9".to_string(),
-        };
+        });
 
         assert_eq!(sparks_reply, correct_reply);
     }
@@ -153,12 +153,12 @@ mod tests {
 
         let sparks_reply = check(test_rolls, false, Some("risky"));
 
-        let correct_reply = Reply {
+        let correct_reply = Ok(Reply {
             title: String::from("Strained success!"),
             description: String::from("Rolled **6** on risky 4d10 (dropped 1d.)"),
             status: MixedSuccess,
             dice: "2, 4, 6, ~~9~~".to_string(),
-        };
+        });
 
         assert_eq!(sparks_reply, correct_reply);
     }
@@ -173,12 +173,12 @@ mod tests {
 
         let sparks_reply = check(test_rolls, false, Some("desperate"));
 
-        let correct_reply = Reply {
+        let correct_reply = Ok(Reply {
             title: String::from("Critical success!"),
             description: String::from("Rolled **10** on desperate 4d10 (dropped 2d.)"),
             status: Crit,
             dice: "~~10~~, 4, ~~10~~, 10".to_string(),
-        };
+        });
 
         assert_eq!(sparks_reply, correct_reply);
     }
@@ -193,12 +193,12 @@ mod tests {
 
         let sparks_reply = check(test_rolls, false, Some("desperate"));
 
-        let correct_reply = Reply {
+        let correct_reply = Ok(Reply {
             title: String::from("Got 8 on desperate 2d10."),
             description: String::from("Your **desperate** 2d check counts as a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice."),
             status: MixedSuccess,
             dice: "~~8~~, ~~7~~".to_string(),
-        };
+        });
 
         assert_eq!(sparks_reply, correct_reply);
     }

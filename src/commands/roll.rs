@@ -6,7 +6,7 @@ use serenity::model::prelude::interaction::application_command::{
 
 use serenity::utils::Color;
 
-use crate::interpreter::ForgedType;
+use crate::interpreter::{ForgedType, WildType};
 use crate::{interpreter, roll_dice, DiscordEmbed, DiscordMessage, RollStatus};
 
 // serenity has no normal green for some reason? just dark???
@@ -113,6 +113,47 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                         .kind(CommandOptionType::SubCommand)
                 })
         })
+        .create_option(|option| {
+            option
+                .name("wild")
+                .description("Rolls a Wild Words roll")
+                .kind(CommandOptionType::SubCommand)
+                .create_sub_option(|type_option| {
+                    type_option
+                        .name("type")
+                        .description("The type of roll you'd like to make.")
+                        .kind(CommandOptionType::String)
+                        .required(true)
+                        .add_string_choice("Action", "action")
+                        .add_string_choice("Attack", "attack")
+                        .add_string_choice("Defense", "defense")
+                        .add_string_choice("Acquisition", "acquisition")
+                        .add_string_choice("Creation", "creation")
+                        .add_string_choice("Recovery", "recovery")
+                        .add_string_choice("Ratings", "ratings")
+                        .add_string_choice("Watch", "watch")
+                        .add_string_choice("Weather-watching", "weather")
+                })
+                .create_sub_option(|pool| {
+                    pool
+                        .name("pool")
+                        .description("The size of your dice pool.")
+                        .kind(CommandOptionType::Integer)
+                        .required(true)
+                        .min_int_value(0)
+                        .max_int_value(6)
+                })
+                .create_sub_option(|cut| {
+                    cut
+                        .name("cut")
+                        .description("The number of dice to remove from your pool, starting with the highest")
+                        .kind(CommandOptionType::Integer)
+                        .required(false)
+                        .min_int_value(0)
+                        .max_int_value(6)
+                })
+            
+        })
 }
 
 fn status_colors(status: RollStatus) -> Color {
@@ -126,8 +167,10 @@ fn status_colors(status: RollStatus) -> Color {
 
 /// # Errors
 ///
-/// Will return `Err` if the correct arguments aren't received. This, theoretically, shouldn't be
-/// possible unless the arguments are lost in transit between Discord and Sparks?
+/// Will return `Err` if the correct arguments aren't received, or will propagate errors up from
+/// within an interpreter function. Strictly speaking these errors shouldn't be possible (either
+/// the logic will never reach them or else command args would have to get lost between Discord and
+/// Sparks), but they are accounted for anyway just in case.
 pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
     // println!("command data options: ");
     // for option in options {
@@ -201,8 +244,6 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
                     }
                 };
 
-                println!("{:#?}", roll_opts[0]);
-
                 let danger = match roll_opts[0].options.get(1) {
                     Some(command) => {
                         println!("{:?}", command);
@@ -216,14 +257,58 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
                     None => None,
                 };
 
-                println!("{:?}", danger);
-
-                interpreter::sbr::check(roll_dice(pool, 10), zero_d, danger)
+                interpreter::sbr::check(roll_dice(pool, 10), zero_d, danger)?
             }
             "fallout" => interpreter::sbr::test_fallout(roll_dice(1, 12).max),
             _ => {
                 return Err("Received invalid subcommand for SbR roll.");
             }
+        },
+        "wild" => {
+            println!("{:#?}", &roll_opts);
+            let Some(CommandDataOptionValue::String(typestring)) = &roll_opts[0].resolved else {
+                return Err("Couldn't retrieve type of Wild Words roll.");
+            };
+
+            let Some(CommandDataOptionValue::Integer(userpool)) = roll_opts[1].resolved else {
+                return Err("Couldn't retrieve dice pool.");
+            };
+
+            let cut = match roll_opts.get(2) {
+                Some(command) => {
+                    println!("{:?}", command);
+                    match &command.resolved {
+                        Some(CommandDataOptionValue::Integer(user_cut)) => {
+                            Some(*user_cut)
+                        }
+                        _ => return Err("Received cut option but did not get a value."),
+                    }
+                }
+                None => None,
+            };
+
+            let roll_type = match typestring.as_str() {
+                "action" => WildType::Action,
+                "attack" => WildType::Attack,
+                "defense" => WildType::Defense,
+                "acquisition" => WildType::Acquisition,
+                "creation" => WildType::Creation,
+                "recovery" => WildType::Recovery,
+                "ratings" => WildType::Ratings,
+                "watch" => WildType::Watch,
+                "weather" => WildType::Weather,
+                _ => return Err("Received invalid roll type for Wild Words roll.")
+            };
+
+            let (pool, zero_d) = {
+                if userpool == 0 {
+                    (1, true)
+                } else {
+                    (userpool, false)
+                }
+            };
+
+            interpreter::ww::wild_roll(roll_dice(pool, 6), roll_type, zero_d, cut)?
         },
         _ => {
             return Err("This command has not yet been implemented.");
@@ -235,7 +320,7 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
         embed: Some(DiscordEmbed {
             title: Some(message.title),
             description: Some(message.description),
-            fields: (Some(vec![("Rolls".to_string(), message.dice, true)])),
+            fields: Some(vec![("Rolls".to_string(), message.dice, true)]),
             color: Some(status_colors(message.status)),
         }),
     })

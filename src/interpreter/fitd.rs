@@ -1,7 +1,7 @@
 use crate::{
     interpreter::{
         ForgedType,
-        ForgedType::{Action, Clear, Fortune, Resist},
+        ForgedType::*,
         Reply,
         RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
     },
