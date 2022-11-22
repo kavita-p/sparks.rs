@@ -37,6 +37,7 @@ impl EventHandler for Handler {
                         }),
                     },
                 },
+                "sparks-help" => commands::help::run(&command.data.options),
                 _ => DiscordMessage {
                     text: None,
                     embed: Some(DiscordEmbed {
@@ -131,6 +132,7 @@ impl EventHandler for Handler {
                 .create_application_command(|command| commands::buzz::register(command))
                 .create_application_command(|command| commands::flicker::register(command))
                 .create_application_command(|command| commands::roll::register(command))
+                .create_application_command(|command| commands::help::register(command))
         })
         .await;
 

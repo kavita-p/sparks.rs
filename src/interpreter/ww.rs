@@ -11,8 +11,6 @@ use crate::{
     Rolls,
 };
 
-use super::RollStatus;
-
 pub fn wild_roll(
     rolls: Rolls,
     roll_type: WildType,

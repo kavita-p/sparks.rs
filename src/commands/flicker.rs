@@ -1,7 +1,7 @@
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::prelude::interaction::application_command::CommandDataOption;
 
-use crate::{DiscordEmbed, DiscordMessage};
+use crate::DiscordMessage;
 
 pub fn run(_options: &[CommandDataOption]) -> DiscordMessage {
     DiscordMessage {

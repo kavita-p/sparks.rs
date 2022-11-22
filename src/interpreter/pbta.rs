@@ -5,7 +5,7 @@ use crate::{
     },
     Rolls,
 };
-use std::{cmp::Ordering, fmt::Write as _};
+use std::cmp::Ordering;
 
 pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
     let score = rolls.dice.iter().sum::<i64>() + stat;
