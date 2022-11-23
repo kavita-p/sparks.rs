@@ -4,7 +4,6 @@ use serenity::async_trait;
 use serenity::model::application::command::Command;
 use serenity::model::application::interaction::{Interaction, InteractionResponseType};
 use serenity::model::gateway::Ready;
-use serenity::model::id::GuildId;
 use serenity::prelude::*;
 
 use serenity::utils::Color;
@@ -19,31 +18,23 @@ impl EventHandler for Handler {
         if let Interaction::ApplicationCommand(command) = interaction {
             println!("Received command interaction: {:#?}", command);
 
-            let content = match command.data.name.as_str() {
-                "buzz" => commands::buzz::run(&command.data.options),
-                "flicker" => commands::flicker::run(&command.data.options),
-                "roll" => match commands::roll::run(&command.data.options) {
-                    Ok(roll) => roll,
-                    Err(err) => DiscordMessage {
-                        text: None,
-                        embed: Some(DiscordEmbed {
-                            title: Some("Error!".to_string()),
-                            description: Some("Something's gone wrong with Sparks! Please report this to her page (https://yrgirlkv.itch.io/sparks), along with the command you used and any error output text.".to_string()),
-                            fields: Some(vec![("Error:".to_string(), err.to_string(), true)]),
-                            color: Some(Color::DARK_RED),
-                        }),
-                    },
-                },
-                "sparks-help" => commands::help::run(&command.data.options),
-                _ => DiscordMessage {
+            let content = match match command.data.name.as_str() {
+                "buzz" => Ok(commands::buzz::run(&command.data.options)),
+                "flicker" => Ok(commands::flicker::run(&command.data.options)),
+                "roll" => commands::roll::run(&command.data.options),
+                "sparks-help" => Ok(commands::help::run(&command.data.options)),
+                _ => Err("Received unknown command."),
+            } {
+                Ok(message) => message,
+                Err(err) => DiscordMessage {
                     text: None,
                     embed: Some(DiscordEmbed {
-                        title: Some("Error".to_string()),
+                        title: Some("Error!".to_string()),
                         description: Some("Something's gone wrong with Sparks! Please report this to her page (https://yrgirlkv.itch.io/sparks), along with the command you used and any error output text.".to_string()),
-                        fields: Some(vec![("Error:".to_string(), "Received unknown command".to_string(), true)]),
+                        fields: Some(vec![("Error:".to_string(), err.to_string(), true)]),
                         color: Some(Color::DARK_RED),
                     }),
-                },
+                }
             };
 
             if let Err(e) = command
@@ -83,36 +74,6 @@ impl EventHandler for Handler {
 
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("Sparks, ready! Logged in as {}", ready.user.name);
-
-        let guild_id = GuildId(
-            env::var("GUILD_ID")
-                .expect("Expected GUILD_ID in environment")
-                .parse()
-                .expect("GUILD_ID must be an integer"),
-        );
-
-        let current_commands = guild_id
-            .get_application_commands(&ctx.http)
-            .await
-            .expect("Should be able to retrieve commands.");
-
-        for command in current_commands {
-            guild_id
-                .delete_application_command(&ctx.http, command.id)
-                .await
-                .expect("Should be able to delete commands.");
-        }
-
-        let commands = guild_id
-            .set_application_commands(&ctx.http, |commands| {
-                commands.create_application_command(|command| command)
-            })
-            .await;
-
-        println!(
-            "I now have the following guild slash commands: {:#?}",
-            commands
-        );
 
         let current_global_commands = Command::get_global_application_commands(&ctx.http)
             .await
