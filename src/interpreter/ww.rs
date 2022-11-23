@@ -19,10 +19,7 @@ pub fn wild_roll(
 ) -> Result<Reply, &'static str> {
     let special_roll = roll_type == WildType::Watch || roll_type == WildType::Weather;
 
-    let drop_count = match cut {
-        Some(cut_val) => cut_val,
-        None => 0,
-    };
+    let drop_count = cut.unwrap_or(0);
 
     let doubles = !has_unique_elements(&rolls.dice);
     let overcut = drop_count >= rolls.dice.len() as i64;

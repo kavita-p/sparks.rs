@@ -66,18 +66,16 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
         )
     } else if zero_d {
         format!("You've asked for a 0d roll! {}", zero_d_text)
+    } else if let Some(danger_level) = danger {
+        format!(
+            "Rolled **{}** on {} {}d10 (dropped {}d.)",
+            dropped_max,
+            danger_level,
+            rolls.dice.len(),
+            drop_count
+        )
     } else {
-        if let Some(danger_level) = danger {
-            format!(
-                "Rolled **{}** on {} {}d10 (dropped {}d.)",
-                dropped_max,
-                danger_level,
-                rolls.dice.len(),
-                drop_count
-            )
-        } else {
-            format!("Rolled **{}** on {}d10.", dropped_max, rolls.dice.len())
-        }
+        format!("Rolled **{}** on {}d10.", dropped_max, rolls.dice.len())
     };
 
     Ok(Reply {
