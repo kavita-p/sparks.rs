@@ -4,3 +4,4 @@ pub mod help;
 pub mod roll;
 
 pub mod builders;
+pub mod handlers;
