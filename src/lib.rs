@@ -14,6 +14,7 @@ pub struct Rolls {
     pub dice: Vec<i64>,
 }
 
+#[must_use]
 pub fn roll_dice(count: i64, sides: i64) -> Rolls {
     let mut dice: Vec<i64> = Vec::new();
     let mut min = i64::MAX;
@@ -34,6 +35,7 @@ pub fn roll_dice(count: i64, sides: i64) -> Rolls {
 }
 
 impl Rolls {
+    #[must_use]
     pub fn join_dice(self) -> String {
         self.dice
             .into_iter()
@@ -42,7 +44,8 @@ impl Rolls {
             .join(", ")
     }
 
-    pub fn strike_and_join_dice(self, drop_count: i64) -> String {
+    #[must_use]
+    pub fn strike_and_join_dice(self, drop_count: usize) -> String {
         let mut largest_dice = self
             .dice
             .into_iter()
@@ -54,7 +57,7 @@ impl Rolls {
             .into_iter()
             .enumerate()
             .map(|(pos, (idx, val))| {
-                if pos < drop_count as usize {
+                if pos < drop_count {
                     (idx, val, true)
                 } else {
                     (idx, val, false)

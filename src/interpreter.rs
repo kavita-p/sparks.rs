@@ -33,15 +33,15 @@ pub enum WildType {
 impl Display for WildType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            WildType::Action => write!(f, "Action"),
-            WildType::Attack => write!(f, "Attack"),
-            WildType::Defense => write!(f, "Defense"),
-            WildType::Acquisition => write!(f, "Acquisition"),
-            WildType::Creation => write!(f, "Creation"),
-            WildType::Recovery => write!(f, "Recovery"),
-            WildType::Ratings => write!(f, "Ratings"),
-            WildType::Watch => write!(f, "Watch"),
-            WildType::Weather => write!(f, "Weather-watching"),
+            Self::Action => write!(f, "Action"),
+            Self::Attack => write!(f, "Attack"),
+            Self::Defense => write!(f, "Defense"),
+            Self::Acquisition => write!(f, "Acquisition"),
+            Self::Creation => write!(f, "Creation"),
+            Self::Recovery => write!(f, "Recovery"),
+            Self::Ratings => write!(f, "Ratings"),
+            Self::Watch => write!(f, "Watch"),
+            Self::Weather => write!(f, "Weather-watching"),
         }
     }
 }

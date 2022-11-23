@@ -16,7 +16,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
     let dropped_max = if drop_count > 0 && drop_count < rolls.dice.len() {
         let mut sorted_dice = rolls.dice.clone();
         sorted_dice.sort_by(|a, b| b.cmp(a));
-        sorted_dice[(drop_count) as usize]
+        sorted_dice[drop_count]
     } else {
         rolls.max
     };
@@ -82,7 +82,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
         title,
         description,
         status,
-        dice: rolls.strike_and_join_dice(drop_count as i64),
+        dice: rolls.strike_and_join_dice(drop_count),
     })
 }
 

@@ -6,30 +6,32 @@ use crate::{
         Reply,
         RollStatus::{Crit, Failure, FullSuccess, MixedSuccess},
         WildType,
-        WildType::*,
+        WildType::{
+            Acquisition, Action, Attack, Creation, Defense, Ratings, Recovery, Watch, Weather,
+        },
     },
     Rolls,
 };
 
 pub fn wild_roll(
     rolls: Rolls,
-    roll_type: WildType,
+    roll_type: &WildType,
     zero_d: bool,
     cut: Option<i64>,
 ) -> Result<Reply, &'static str> {
-    let special_roll = roll_type == WildType::Watch || roll_type == WildType::Weather;
+    let special_roll = roll_type == &Watch || roll_type == &Weather;
 
-    let drop_count = cut.unwrap_or(0);
+    let drop_count = cut.unwrap_or(0).try_into().unwrap_or(0);
 
     let doubles = !has_unique_elements(&rolls.dice);
-    let overcut = drop_count >= rolls.dice.len() as i64;
+    let overcut = drop_count >= rolls.dice.len();
 
     let score = if zero_d || overcut {
         rand::thread_rng().gen_range(1..=6)
     } else if drop_count > 0 {
         let mut sorted_dice = rolls.dice.clone();
         sorted_dice.sort_by(|a, b| b.cmp(a));
-        sorted_dice[(drop_count) as usize]
+        sorted_dice[drop_count as usize]
     } else {
         rolls.max
     };
@@ -139,7 +141,7 @@ pub fn wild_roll(
     };
 
     if overcut && drop_count > 0 && zero_d {
-        description += "\n\n*What are you even doing that you had to cut from a roll of 0 dice?*"
+        description += "\n\n*What are you even doing that you had to cut from a roll of 0 dice?*";
     };
 
     let dice = if zero_d || overcut {

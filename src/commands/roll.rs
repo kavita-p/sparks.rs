@@ -152,11 +152,10 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                         .min_int_value(0)
                         .max_int_value(6)
                 })
-            
         })
 }
 
-fn status_colors(status: RollStatus) -> Color {
+const fn status_colors(status: &RollStatus) -> Color {
     match status {
         RollStatus::Crit => Color::TEAL,
         RollStatus::FullSuccess => EMBED_GREEN,
@@ -172,7 +171,6 @@ fn status_colors(status: RollStatus) -> Color {
 /// the logic will never reach them or else command args would have to get lost between Discord and
 /// Sparks), but they're accounted for just in case.
 pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
-
     let roll_type = &options[0].name;
 
     let roll_opts = &options[0].options;
@@ -267,14 +265,10 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
             };
 
             let cut = match roll_opts.get(2) {
-                Some(command) => {
-                    match &command.resolved {
-                        Some(CommandDataOptionValue::Integer(user_cut)) => {
-                            Some(*user_cut)
-                        }
-                        _ => return Err("Received cut option but did not get a value."),
-                    }
-                }
+                Some(command) => match &command.resolved {
+                    Some(CommandDataOptionValue::Integer(user_cut)) => Some(*user_cut),
+                    _ => return Err("Received cut option but did not get a value."),
+                },
                 None => None,
             };
 
@@ -288,7 +282,7 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
                 "ratings" => WildType::Ratings,
                 "watch" => WildType::Watch,
                 "weather" => WildType::Weather,
-                _ => return Err("Received invalid roll type for Wild Words roll.")
+                _ => return Err("Received invalid roll type for Wild Words roll."),
             };
 
             let (pool, zero_d) = {
@@ -299,8 +293,8 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
                 }
             };
 
-            interpreter::ww::wild_roll(roll_dice(pool, 6), roll_type, zero_d, cut)?
-        },
+            interpreter::ww::wild_roll(roll_dice(pool, 6), &roll_type, zero_d, cut)?
+        }
         _ => {
             return Err("This command has not yet been implemented.");
         }
@@ -312,7 +306,7 @@ pub fn run(options: &[CommandDataOption]) -> Result<DiscordMessage, &str> {
             title: Some(message.title),
             description: Some(message.description),
             fields: Some(vec![("Rolls".to_string(), message.dice, true)]),
-            color: Some(status_colors(message.status)),
+            color: Some(status_colors(&message.status)),
         }),
     })
 }

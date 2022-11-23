@@ -3,6 +3,7 @@ use serenity::{builder::CreateApplicationCommand, utils::Color};
 
 use crate::{DiscordEmbed, DiscordMessage};
 
+#[must_use]
 pub fn run(_options: &[CommandDataOption]) -> DiscordMessage {
     let help_text = include_str!("help_text.md");
     DiscordMessage {

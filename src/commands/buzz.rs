@@ -3,6 +3,7 @@ use serenity::model::prelude::interaction::application_command::CommandDataOptio
 
 use crate::DiscordMessage;
 
+#[must_use]
 pub fn run(_options: &[CommandDataOption]) -> DiscordMessage {
     DiscordMessage {
         text: Some("Zap!".to_string()),
