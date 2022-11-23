@@ -1,5 +1,4 @@
 use serenity::builder::CreateApplicationCommand;
-use serenity::model::prelude::command::CommandOptionType;
 use serenity::model::prelude::interaction::application_command::{
     CommandDataOption, CommandDataOptionValue,
 };
@@ -8,6 +7,12 @@ use serenity::utils::Color;
 
 use crate::interpreter::{ForgedType, WildType};
 use crate::{interpreter, roll_dice, DiscordEmbed, DiscordMessage, RollStatus};
+
+use super::builders::build_custom::build_custom;
+use super::builders::build_fitd::build_fitd;
+use super::builders::build_pbta::build_pbta;
+use super::builders::build_sbr::build_sbr;
+use super::builders::build_ww::build_ww;
 
 // serenity has no normal green for some reason? just dark???
 const EMBED_GREEN: serenity::utils::Color = Color::from_rgb(87, 242, 135);
@@ -18,141 +23,11 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
     command
         .name("roll")
         .description("rolls dice")
-        .create_option(|option| {
-            option
-                .name("custom")
-                .description("custom")
-                .kind(CommandOptionType::SubCommand)
-                .create_sub_option(|count_option| {
-                    count_option
-                        .name("count")
-                        .description("The number of dice you'd like to roll. Can't be negative.")
-                        .kind(CommandOptionType::Integer)
-                        .required(true)
-                        .min_int_value(0)
-                })
-                .create_sub_option(|sides_option| {
-                    sides_option
-                        .name("sides")
-                        .description("The number of sides per die. Can't be negative.")
-                        .kind(CommandOptionType::Integer)
-                        .required(true)
-                        .min_int_value(0)
-                })
-        })
-        .create_option(|option| {
-            option
-                .name("fitd")
-                .description("Rolls a Forged in the Dark roll.")
-                .kind(CommandOptionType::SubCommand)
-                .create_sub_option(|type_option| {
-                    type_option
-                        .name("type")
-                        .description("The type of roll you'd like to make.")
-                        .kind(CommandOptionType::String)
-                        .required(true)
-                        .add_string_choice("action", "action")
-                        .add_string_choice("resist", "resist")
-                        .add_string_choice("fortune", "fortune")
-                        .add_string_choice("downtime/clear stress", "clear")
-                })
-                .create_sub_option(|pool_option| {
-                    pool_option
-                        .name("pool")
-                        .description("The size of your dice pool.")
-                        .kind(CommandOptionType::Integer)
-                        .required(true)
-                        .min_int_value(0)
-                })
-        })
-        .create_option(|option| {
-            option
-                .name("pbta")
-                .description("Roll a Powered by the Apocalypse move.")
-                .kind(CommandOptionType::SubCommand)
-                .create_sub_option(|stat| {
-                    stat.name("stat")
-                        .description(
-                            "The stat you're rolling with, plus any bonuses or negative modifiers.",
-                        )
-                        .kind(CommandOptionType::Integer)
-                        .required(true)
-                })
-        })
-        .create_option(|option| {
-            option
-                .name("sbr")
-                .description("Rolls a Sparked by Resistance check or fallout test.")
-                .kind(CommandOptionType::SubCommandGroup)
-                .create_sub_option(|check| {
-                    check
-                        .name("check")
-                        .description("Rolls d10s for a Sparked by Resistance check.")
-                        .kind(CommandOptionType::SubCommand)
-                        .create_sub_option(|pool| {
-                            pool.name("pool")
-                                .description("The size of your dice pool.")
-                                .kind(CommandOptionType::Integer)
-                                .required(true)
-                                .min_int_value(0)
-                        })
-                        .create_sub_option(|danger| {
-                            danger
-                                .name("danger")
-                                .description("Whether the check is risky or desperate.")
-                                .kind(CommandOptionType::String)
-                                .required(false)
-                                .add_string_choice("risky", "risky")
-                                .add_string_choice("desperate", "desperate")
-                        })
-                })
-                .create_sub_option(|fallout| {
-                    fallout
-                        .name("fallout")
-                        .description("Rolls a Sparked by Resistance fallout test.")
-                        .kind(CommandOptionType::SubCommand)
-                })
-        })
-        .create_option(|option| {
-            option
-                .name("wild")
-                .description("Rolls a Wild Words roll")
-                .kind(CommandOptionType::SubCommand)
-                .create_sub_option(|type_option| {
-                    type_option
-                        .name("type")
-                        .description("The type of roll you'd like to make.")
-                        .kind(CommandOptionType::String)
-                        .required(true)
-                        .add_string_choice("Action", "action")
-                        .add_string_choice("Attack", "attack")
-                        .add_string_choice("Defense", "defense")
-                        .add_string_choice("Acquisition", "acquisition")
-                        .add_string_choice("Creation", "creation")
-                        .add_string_choice("Recovery", "recovery")
-                        .add_string_choice("Ratings", "ratings")
-                        .add_string_choice("Watch", "watch")
-                        .add_string_choice("Weather-watching", "weather")
-                })
-                .create_sub_option(|pool| {
-                    pool
-                        .name("pool")
-                        .description("The size of your dice pool.")
-                        .kind(CommandOptionType::Integer)
-                        .required(true)
-                        .min_int_value(0)
-                        .max_int_value(6)
-                })
-                .create_sub_option(|cut| {
-                    cut
-                        .name("cut")
-                        .description("The number of dice to remove from your pool, starting with the highest")
-                        .kind(CommandOptionType::Integer)
-                        .required(false)
-                        .min_int_value(0)
-                        .max_int_value(6)
-                })
-        })
+        .create_option(|custom_option| build_custom(custom_option))
+        .create_option(|fitd_option| build_fitd(fitd_option))
+        .create_option(|pbta_option| build_pbta(pbta_option))
+        .create_option(|sbr_option| build_sbr(sbr_option))
+        .create_option(|ww_option| build_ww(ww_option))
 }
 
 const fn status_colors(status: &RollStatus) -> Color {

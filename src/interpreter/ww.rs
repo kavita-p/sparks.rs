@@ -178,7 +178,7 @@ mod test {
             dice: vec![2, 5, 4],
         };
 
-        let sparks_reply = wild_roll(test_rolls, WildType::Action, false, None);
+        let sparks_reply = wild_roll(test_rolls, &Action, false, None);
 
         assert_eq!(sparks_reply, correct_reply)
     }
@@ -198,7 +198,7 @@ mod test {
             dice: vec![2, 5, 4],
         };
 
-        let sparks_reply = wild_roll(test_rolls, WildType::Action, false, Some(1));
+        let sparks_reply = wild_roll(test_rolls, &Action, false, Some(1));
 
         assert_eq!(sparks_reply, correct_reply)
     }
