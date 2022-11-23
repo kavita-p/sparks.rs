@@ -10,7 +10,7 @@ Sparks uses [serenity.rs](https://github.com/serenity-rs/) to talk to Discord, a
 
 ## Code
 
-The meat of Sparks' code can be found in `src/interpreters`, which is responsible for taking vectors of dice and generating results from them. It uses a struct called `Rolls` to store dice, which can be found in `src/lib.rs`. `commands` holds the actual responses to Discord commands, and `main.rs` handles the actual interaction with Discord, including the developer token, actually routing a command to its handler, etc.
+The meat of Sparks' code can be found in `src/interpreters`, which is responsible for taking vectors of dice and generating results from them. It uses a struct called `Rolls` to store dice, which can be found in `src/lib.rs`. `src/commands/builders` is where the Discord user commands are constructed. `src/commands/handlers` contains the code that handles receiving user input, invoking dice rolls, and passing the results of rolls to the appropriate interpreter. `src/main.rs` handles the actual interaction with Discord, including the developer token, actually routing a command to its handler, etc.
 
 ## Contributions
 
