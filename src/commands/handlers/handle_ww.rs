@@ -11,12 +11,12 @@ use crate::{
 /// Returns errors for arguments not received or received incorrectly.
 pub fn handle_ww(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
     let Some(CommandDataOptionValue::String(typestring)) = &roll_opts[0].resolved else {
-    return Err("Couldn't retrieve type of Wild Words roll.");
-};
+        return Err("Couldn't retrieve type of Wild Words roll.");
+    };
 
     let Some(CommandDataOptionValue::Integer(userpool)) = roll_opts[1].resolved else {
-    return Err("Couldn't retrieve dice pool.");
-};
+        return Err("Couldn't retrieve dice pool.");
+    };
 
     let cut = match roll_opts.get(2) {
         Some(command) => match &command.resolved {

@@ -11,12 +11,12 @@ use crate::{
 /// Returns errors for arguments not received or received incorrectly.
 pub fn handle_fitd(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
     let Some(CommandDataOptionValue::String(typestring)) = &roll_opts[0].resolved else {
-    return Err("Couldn't retrieve type of FitD roll.");
-};
+        return Err("Couldn't retrieve type of FitD roll.");
+    };
 
     let Some(CommandDataOptionValue::Integer(userpool)) = roll_opts[1].resolved else {
-    return Err("Couldn't retrieve dice pool.");
-};
+        return Err("Couldn't retrieve dice pool.");
+    };
 
     let forged_type = match typestring.as_str() {
         "action" => ForgedType::Action,

@@ -12,11 +12,11 @@ use crate::{
 pub fn handle_custom(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
     let Some(CommandDataOptionValue::Integer(count)) = roll_opts[0].resolved else {
       return Err("Couldn't retrieve count.");
-  };
+    };
 
     let Some(CommandDataOptionValue::Integer(sides)) = roll_opts[1].resolved else {
       return Err("Couldn't retrieve sides.");
-  };
+    };
 
     Ok(interpreter::custom::roll(
         roll_dice(count, sides),
