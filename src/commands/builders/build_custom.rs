@@ -15,7 +15,7 @@ pub fn build_custom(
                 .description("The number of dice you'd like to roll. Can't be negative.")
                 .kind(CommandOptionType::Integer)
                 .required(true)
-                .min_int_value(0)
+                .min_int_value(1)
         })
         .create_sub_option(|sides_option| {
             sides_option
@@ -23,6 +23,6 @@ pub fn build_custom(
                 .description("The number of sides per die. Can't be negative.")
                 .kind(CommandOptionType::Integer)
                 .required(true)
-                .min_int_value(0)
+                .min_int_value(1)
         })
 }
