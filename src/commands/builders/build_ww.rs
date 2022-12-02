@@ -36,7 +36,7 @@ pub fn build_ww(
         .create_sub_option(|cut| {
             cut.name("cut")
                 .description(
-                    "The number of dice to remove from your pool. Dice are removed descending from the highest value rolled.",
+                    "The number of dice to remove from your pool, in descending order by value.",
                 )
                 .kind(CommandOptionType::Integer)
                 .required(false)
