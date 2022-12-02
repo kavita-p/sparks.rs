@@ -104,7 +104,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod lib_tests {
     use super::*;
 
     #[test]
