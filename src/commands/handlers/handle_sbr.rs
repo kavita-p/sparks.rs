@@ -25,15 +25,12 @@ pub fn handle_sbr(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
             };
 
             let danger = match roll_opts[0].options.get(1) {
-                Some(command) => {
-                    println!("{:?}", command);
-                    match &command.resolved {
-                        Some(CommandDataOptionValue::String(danger_level)) => {
-                            Some(danger_level.as_str())
-                        }
-                        _ => return Err("Received danger option but did not get a value."),
+                Some(command) => match &command.resolved {
+                    Some(CommandDataOptionValue::String(danger_level)) => {
+                        Some(danger_level.as_str())
                     }
-                }
+                    _ => return Err("Received danger option but did not get a value."),
+                },
                 None => None,
             };
 
