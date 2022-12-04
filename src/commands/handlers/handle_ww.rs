@@ -19,8 +19,8 @@ pub fn handle_ww(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
     };
 
     let cut = match roll_opts.get(2) {
-        Some(command) => match &command.resolved {
-            Some(CommandDataOptionValue::Integer(user_cut)) => Some(*user_cut),
+        Some(command) => match command.resolved {
+            Some(CommandDataOptionValue::Integer(user_cut)) => Some(user_cut),
             _ => return Err("Received cut option but did not get a value."),
         },
         None => None,
