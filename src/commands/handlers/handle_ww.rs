@@ -28,7 +28,7 @@ pub fn handle_ww(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         None => None,
     };
 
-    let wild_type = WildType::from_str(&typestring)
+    let wild_type = WildType::from_str(typestring)
         .map_err(|_| "Received invalid roll type for Wild Words roll.")?;
 
     let (pool, zero_d) = {
