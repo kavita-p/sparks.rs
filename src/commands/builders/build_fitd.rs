@@ -17,8 +17,8 @@ pub fn build_fitd(
                 .required(true)
                 .add_string_choice("action", "action")
                 .add_string_choice("resist", "resist")
-                .add_string_choice("fortune", "fortune")
-                .add_string_choice("downtime/clear stress", "clear")
+                .add_string_choice("fortune/downtime", "fortune")
+                .add_string_choice("clear stress", "clear")
         })
         .create_sub_option(|pool_option| {
             pool_option
