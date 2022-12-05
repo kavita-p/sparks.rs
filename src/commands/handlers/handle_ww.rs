@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serenity::model::prelude::interaction::application_command::{
     CommandDataOption, CommandDataOptionValue,
 };
@@ -26,18 +28,8 @@ pub fn handle_ww(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         None => None,
     };
 
-    let roll_type = match typestring.as_str() {
-        "action" => WildType::Action,
-        "attack" => WildType::Attack,
-        "defense" => WildType::Defense,
-        "acquisition" => WildType::Acquisition,
-        "creation" => WildType::Creation,
-        "recovery" => WildType::Recovery,
-        "ratings" => WildType::Ratings,
-        "watch" => WildType::Watch,
-        "weather" => WildType::Weather,
-        _ => return Err("Received invalid roll type for Wild Words roll."),
-    };
+    let wild_type = WildType::from_str(&typestring)
+        .map_err(|_| "Received invalid roll type for Wild Words roll.")?;
 
     let (pool, zero_d) = {
         if userpool == 0 {
@@ -47,5 +39,5 @@ pub fn handle_ww(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         }
     };
 
-    interpreter::ww::wild_roll(roll_dice(pool, 6), &roll_type, zero_d, cut)
+    interpreter::ww::wild_roll(roll_dice(pool, 6), &wild_type, zero_d, cut)
 }

@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serenity::model::prelude::interaction::application_command::{
     CommandDataOption, CommandDataOptionValue,
 };
@@ -18,13 +20,8 @@ pub fn handle_fitd(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         return Err("Couldn't retrieve dice pool.");
     };
 
-    let forged_type = match typestring.as_str() {
-        "action" => ForgedType::Action,
-        "resist" => ForgedType::Resist,
-        "fortune" => ForgedType::Fortune,
-        "clear" => ForgedType::Clear,
-        _ => return Err("Received invalid type for FitD roll."),
-    };
+    let forged_type = ForgedType::from_str(&typestring)
+        .map_err(|_| "Received invalid type for Forged in the Dark roll.")?;
 
     let (pool, zero_d) = {
         if userpool == 0 {

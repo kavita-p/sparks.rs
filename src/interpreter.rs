@@ -1,5 +1,6 @@
 use core::fmt;
 use std::fmt::Display;
+use strum_macros::EnumString;
 
 #[derive(PartialEq, Eq, Debug)]
 pub enum RollStatus {
@@ -9,7 +10,8 @@ pub enum RollStatus {
     Failure,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, EnumString)]
+#[strum(ascii_case_insensitive)]
 pub enum ForgedType {
     Action,
     Resist,
@@ -17,7 +19,8 @@ pub enum ForgedType {
     Clear,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, EnumString)]
+#[strum(ascii_case_insensitive)]
 pub enum WildType {
     Action,
     Attack,
