@@ -6,7 +6,7 @@ use serenity::model::prelude::interaction::application_command::{
 
 use crate::{
     interpreter::{self, Reply, WildType},
-    roll_dice,
+    Rolls,
 };
 
 /// # Errors
@@ -39,5 +39,5 @@ pub fn handle_ww(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         }
     };
 
-    interpreter::ww::wild_roll(roll_dice(pool, 6), &wild_type, zero_d, cut)
+    interpreter::ww::wild_roll(Rolls::new(pool, 6), &wild_type, zero_d, cut)
 }

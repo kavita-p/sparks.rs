@@ -4,7 +4,7 @@ use serenity::model::prelude::interaction::application_command::{
 
 use crate::{
     interpreter::{self, Reply},
-    roll_dice,
+    Rolls,
 };
 
 /// # Errors
@@ -14,5 +14,5 @@ pub fn handle_pbta(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         return Err("Couldn't retrieve stat.");
     };
 
-    Ok(interpreter::pbta::move_roll(roll_dice(2, 6), stat))
+    Ok(interpreter::pbta::move_roll(Rolls::new(2, 6), stat))
 }

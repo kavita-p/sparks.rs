@@ -6,7 +6,7 @@ use serenity::model::prelude::interaction::application_command::{
 
 use crate::{
     interpreter::{self, ForgedType, Reply},
-    roll_dice,
+    Rolls,
 };
 
 /// # Errors
@@ -32,7 +32,7 @@ pub fn handle_fitd(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
     };
 
     Ok(interpreter::fitd::forged_roll(
-        roll_dice(pool, 6),
+        Rolls::new(pool, 6),
         &forged_type,
         zero_d,
     ))

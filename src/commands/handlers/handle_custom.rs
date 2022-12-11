@@ -4,7 +4,7 @@ use serenity::model::prelude::interaction::application_command::{
 
 use crate::{
     interpreter::{self, Reply},
-    roll_dice,
+    Rolls,
 };
 
 /// # Errors
@@ -19,7 +19,7 @@ pub fn handle_custom(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
     };
 
     Ok(interpreter::custom::roll(
-        roll_dice(count, sides),
+        Rolls::new(count, sides),
         count,
         sides,
     ))

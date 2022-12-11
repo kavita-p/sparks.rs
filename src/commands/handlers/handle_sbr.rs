@@ -4,7 +4,7 @@ use serenity::model::prelude::interaction::application_command::{
 
 use crate::{
     interpreter::{self, Reply},
-    roll_dice,
+    Rolls,
 };
 
 /// # Errors
@@ -34,9 +34,9 @@ pub fn handle_sbr(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
                 None => None,
             };
 
-            interpreter::sbr::check(roll_dice(pool, 10), zero_d, danger)
+            interpreter::sbr::check(Rolls::new(pool, 10), zero_d, danger)
         }
-        "fallout" => Ok(interpreter::sbr::test_fallout(roll_dice(1, 12).max)),
+        "fallout" => Ok(interpreter::sbr::test_fallout(Rolls::new(1, 12).max)),
         _ => Err("Received invalid subcommand for SbR roll."),
     }
 }

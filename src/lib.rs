@@ -2,6 +2,7 @@ use std::collections::HashSet;
 use std::hash::Hash;
 
 use interpreter::RollStatus;
+use rand::distributions::Uniform;
 use rand::Rng;
 use serenity::utils::Color;
 
@@ -14,27 +15,19 @@ pub struct Rolls {
     pub dice: Vec<i64>,
 }
 
-#[must_use]
-pub fn roll_dice(count: i64, sides: i64) -> Rolls {
-    let mut dice: Vec<i64> = Vec::new();
-    let mut min = i64::MAX;
-    let mut max = i64::MIN;
+impl Rolls {
+    #[must_use]
+    pub fn new(count: i64, sides: i64) -> Self {
+        let count = count.try_into().unwrap_or(0);
+        let sides = Uniform::from(1..=sides);
 
-    for _ in 0..count {
-        let nth_die = rand::thread_rng().gen_range(1..=sides);
-        if nth_die < min {
-            min = nth_die;
-        };
-        if nth_die > max {
-            max = nth_die;
-        };
-        dice.push(nth_die);
+        let dice: Vec<i64> = rand::thread_rng().sample_iter(&sides).take(count).collect();
+        let max = *dice.iter().max().unwrap_or(&0);
+        let min = *dice.iter().min().unwrap_or(&0);
+
+        Self { max, min, dice }
     }
 
-    Rolls { max, min, dice }
-}
-
-impl Rolls {
     #[must_use]
     pub fn join_dice(self) -> String {
         self.dice
