@@ -2,13 +2,11 @@ use std::env;
 
 use serenity::async_trait;
 use serenity::model::application::command::Command;
-use serenity::model::application::interaction::{Interaction, InteractionResponseType};
+use serenity::model::application::interaction::Interaction;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 
-use serenity::utils::Color;
 use sparksrs::commands;
-use sparksrs::{DiscordEmbed, DiscordMessage};
 
 struct Handler;
 
@@ -18,56 +16,12 @@ impl EventHandler for Handler {
         if let Interaction::ApplicationCommand(command) = interaction {
             println!("Received command interaction: {:#?}", command);
 
-            let content = match match command.data.name.as_str() {
-                "buzz" => Ok(commands::buzz::run(&command.data.options)),
-                "flicker" => Ok(commands::flicker::run(&command.data.options)),
-                "roll" => commands::roll::run(&command.data.options),
-                "sparks-help" => Ok(commands::help::run(&command.data.options)),
-                _ => Err("Received unknown command."),
-            } {
-                Ok(message) => message,
-                Err(err) => DiscordMessage {
-                    text: None,
-                    embed: Some(DiscordEmbed {
-                        title: Some("Error!".to_string()),
-                        description: Some("Something's gone wrong with Sparks! Please report this to her page (https://yrgirlkv.itch.io/sparks), along with the command you used and any error output text.".to_string()),
-                        fields: Some(vec![("Error:".to_string(), err.to_string(), true)]),
-                        color: Some(Color::DARK_RED),
-                    }),
-                }
-            };
-
-            if let Err(e) = command
-                .create_interaction_response(&ctx.http, |response| {
-                    response
-                        .kind(InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|message| {
-                            if let Some(text) = content.text {
-                                message.content(text);
-                            };
-                            if let Some(embed) = content.embed {
-                                message.embed(|e| {
-                                    if let Some(title) = embed.title {
-                                        e.title(title);
-                                    };
-                                    if let Some(description) = embed.description {
-                                        e.description(description);
-                                    };
-                                    if let Some(fields) = embed.fields {
-                                        e.fields(fields);
-                                    };
-                                    if let Some(color) = embed.color {
-                                        e.color(color);
-                                    }
-                                    e
-                                });
-                            };
-                            message
-                        })
-                })
-                .await
-            {
-                println!("error: {}", e);
+            match command.data.name.as_str() {
+                "buzz" => commands::buzz::run(command, &ctx.http).await,
+                "flicker" => commands::flicker::run(command, ctx).await,
+                "roll" => commands::roll::run(command, &ctx.http).await,
+                "sparks-help" => commands::help::run(command, &ctx.http).await,
+                _ => commands::error::run(&command, &ctx.http, "Received unknown command.").await,
             }
         }
     }

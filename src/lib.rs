@@ -4,7 +4,6 @@ use std::hash::Hash;
 use interpreter::RollStatus;
 use rand::distributions::Uniform;
 use rand::Rng;
-use serenity::utils::Color;
 
 pub mod commands;
 mod interpreter;
@@ -71,18 +70,6 @@ impl Rolls {
             .collect::<Vec<String>>()
             .join(", ")
     }
-}
-
-pub struct DiscordEmbed {
-    pub title: Option<String>,
-    pub description: Option<String>,
-    // each field is a (field title, field text, inline) tuple
-    pub fields: Option<Vec<(String, String, bool)>>,
-    pub color: Option<Color>,
-}
-pub struct DiscordMessage {
-    pub text: Option<String>,
-    pub embed: Option<DiscordEmbed>,
 }
 
 // utils

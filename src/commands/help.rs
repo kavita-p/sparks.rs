@@ -1,24 +1,33 @@
-use serenity::model::prelude::interaction::application_command::CommandDataOption;
-use serenity::{builder::CreateApplicationCommand, utils::Color};
+use serenity::builder::CreateApplicationCommand;
+use serenity::http::Http;
+use serenity::model::application::interaction::application_command::ApplicationCommandInteraction;
+use serenity::model::prelude::interaction::InteractionResponseType;
+use serenity::utils::Color;
 
-use crate::{DiscordEmbed, DiscordMessage};
-
-#[must_use]
-pub fn run(_options: &[CommandDataOption]) -> DiscordMessage {
+pub async fn run(command: ApplicationCommandInteraction, http: &Http) {
     let help_text = include_str!("help_text.md");
-    DiscordMessage {
-        text: None,
-        embed: Some(DiscordEmbed {
-            title: Some("Info".to_string()),
-            description: Some(help_text.to_string()),
-            color: Some(Color::BLUE),
-            fields: Some(vec![(
-                "Author".to_string(),
-                "kavita#7223".to_string(),
-                true,
-            )]),
-        }),
-    }
+
+    if let Err(why) = command
+        .create_interaction_response(http, |response| {
+            response
+                .kind(InteractionResponseType::ChannelMessageWithSource)
+                .interaction_response_data(|message| {
+                    message.embed(|e| {
+                        e.title("Info")
+                            .description(help_text)
+                            .fields(vec![(
+                                "Author".to_string(),
+                                "kavita#7223".to_string(),
+                                true,
+                            )])
+                            .color(Color::BLUE)
+                    })
+                })
+        })
+        .await
+    {
+        println!("error: {}", why);
+    };
 }
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
