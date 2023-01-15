@@ -1,5 +1,5 @@
-name: vultr-compile
-run-name: vultr-compilation fired by ${{ github.actor }}
+name: nightsky-compile
+run-name: nightsky-compilation fired by ${{ github.actor }}
 on: [workflow_dispatch]
 jobs:
   compile:
