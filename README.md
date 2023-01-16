@@ -15,3 +15,11 @@ The meat of Sparks' code can be found in `src/interpreters`, which is responsibl
 ## Contributions
 
 I am open to these! If you have ideas for how to improve Sparks, please let me know.
+
+## Privacy Policy
+
+Sparks stores no data on its users.
+
+## Terms of Service
+
+You are free to use this bot in any way you wish. To use it on Discord, you will have to comply with Discord's own [Terms of Service](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).
