@@ -3,7 +3,7 @@ use serenity::client::Context;
 use serenity::model::application::interaction::application_command::ApplicationCommandInteraction;
 use serenity::model::prelude::interaction::InteractionResponseType;
 
-pub async fn run(command: ApplicationCommandInteraction, ctx: Context) {
+pub async fn run(command: &ApplicationCommandInteraction, ctx: Context) {
     if let Err(why) = command
         .create_interaction_response(&ctx.http, |response| {
             response

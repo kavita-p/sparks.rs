@@ -17,10 +17,10 @@ impl EventHandler for Handler {
             println!("Received command interaction: {:#?}", command);
 
             match command.data.name.as_str() {
-                "buzz" => commands::buzz::run(command, &ctx.http).await,
-                "flicker" => commands::flicker::run(command, ctx).await,
-                "roll" => commands::roll::run(command, &ctx.http).await,
-                "sparks-help" => commands::help::run(command, &ctx.http).await,
+                "buzz" => commands::buzz::run(&command, &ctx.http).await,
+                "flicker" => commands::flicker::run(&command, ctx).await,
+                "roll" => commands::roll::run(&command, &ctx.http).await,
+                "sparks-help" => commands::help::run(&command, &ctx.http).await,
                 _ => commands::error::run(&command, &ctx.http, "Received unknown command.").await,
             }
         }

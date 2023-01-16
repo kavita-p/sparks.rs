@@ -4,7 +4,7 @@ use serenity::model::application::interaction::application_command::ApplicationC
 use serenity::model::prelude::interaction::InteractionResponseType;
 use serenity::utils::Color;
 
-pub async fn run(command: ApplicationCommandInteraction, http: &Http) {
+pub async fn run(command: &ApplicationCommandInteraction, http: &Http) {
     let help_text = include_str!("help_text.md");
 
     if let Err(why) = command

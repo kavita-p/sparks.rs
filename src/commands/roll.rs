@@ -30,7 +30,7 @@ const fn status_colors(status: &RollStatus) -> Color {
     }
 }
 
-pub async fn run(command: ApplicationCommandInteraction, http: &Http) {
+pub async fn run(command: &ApplicationCommandInteraction, http: &Http) {
     let roll_type = &command.data.options[0].name;
 
     let roll_opts = &command.data.options[0].options;
