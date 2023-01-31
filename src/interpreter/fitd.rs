@@ -84,7 +84,7 @@ pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply 
 
     if roll_type == &Clear {
         description.push_str(
-            "If you've cleared more stress then you currently have, you **overindulge.**",
+            "If you've cleared more stress than you currently have, you **overindulge.**",
         );
     }
 
