@@ -1,11 +1,11 @@
 use serenity::builder::CreateApplicationCommand;
-use serenity::client::Context;
+use serenity::http::Http;
 use serenity::model::application::interaction::application_command::ApplicationCommandInteraction;
 use serenity::model::prelude::interaction::InteractionResponseType;
 
-pub async fn run(command: &ApplicationCommandInteraction, ctx: Context) {
+pub async fn run(command: &ApplicationCommandInteraction, http: &Http) {
     if let Err(why) = command
-        .create_interaction_response(&ctx.http, |response| {
+        .create_interaction_response(http, |response| {
             response
                 .kind(InteractionResponseType::ChannelMessageWithSource)
                 .interaction_response_data(|message| message.content("Hummmmmmmmmm...!"))
