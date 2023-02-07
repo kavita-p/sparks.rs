@@ -111,9 +111,9 @@ pub fn wild_roll(
         }
     } else {
         match score {
-            5 | 6 => FullSuccess,
-            3 | 4 => MixedSuccess,
-            1 | 2 => Failure,
+            6 => FullSuccess,
+            4 | 5 => MixedSuccess,
+            1..=3 => Failure,
             _ => return Err("Dice value out of bounds."),
         }
     };
@@ -178,16 +178,16 @@ mod tests {
     #[test]
     fn action_cut_0() {
         let correct_reply = Ok(Reply {
-            title: "__Action__ [5] Triumph".into(),
+            title: "__Action__ [6] Triumph".into(),
             description: "Complete success, no drawbacks. Mark/clear a box on a track.".into(),
             status: FullSuccess,
-            dice: "2, 5, 4".into(),
+            dice: "2, 6, 4".into(),
         });
 
         let test_rolls = Rolls {
             min: 2,
-            max: 5,
-            dice: vec![2, 5, 4],
+            max: 6,
+            dice: vec![2, 6, 4],
         };
 
         let sparks_reply = wild_roll(test_rolls, &Action, false, None);
