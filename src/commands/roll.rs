@@ -61,10 +61,10 @@ pub async fn run(command: &ApplicationCommandInteraction, http: &Http) {
                 })
                 .await
             {
-                println!("error: {}", why);
+                println!("error: {why}");
             };
         }
-        Err(err) => commands::error::run(&command, http, err).await,
+        Err(err) => commands::error::run(command, http, err).await,
     }
 }
 

@@ -17,11 +17,11 @@ pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
         i64::MIN..=6 => ("Failure!", Failure),
     };
 
-    let mut description = format!("Got **{}** on 2d6", score);
+    let mut description = format!("Got **{score}** on 2d6");
 
     match stat.cmp(&0) {
         Ordering::Greater => {
-            description.push_str(&format!(" + {}.", stat));
+            description.push_str(&format!(" + {stat}."));
         }
         Ordering::Equal => {
             description.push('.');

@@ -14,7 +14,7 @@ struct Handler;
 impl EventHandler for Handler {
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
-            println!("Received command interaction: {:#?}", command);
+            println!("Received command interaction: {command:#?}");
 
             match command.data.name.as_str() {
                 "buzz" => commands::buzz::run(&command, &ctx.http).await,
@@ -49,8 +49,7 @@ impl EventHandler for Handler {
         .await;
 
         println!(
-            "I created the following global slash commands: {:#?}",
-            global_command
+            "I created the following global slash commands: {global_command:#?}"
         );
     }
 }
@@ -71,6 +70,6 @@ async fn main() {
     // Shards will automatically attempt to reconnect, and will perform
     // exponential backoff until it reconnects.
     if let Err(why) = client.start().await {
-        println!("Client error: {:?}", why);
+        println!("Client error: {why:?}");
     }
 }

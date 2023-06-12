@@ -62,7 +62,7 @@ impl Rolls {
             .into_iter()
             .map(|(_idx, val, strike)| {
                 if strike {
-                    format!("~~{}~~", val)
+                    format!("~~{val}~~")
                 } else {
                     val.to_string()
                 }

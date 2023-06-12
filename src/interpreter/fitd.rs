@@ -53,14 +53,14 @@ pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply 
             Failure => "Reduced effect.",
         }),
         Clear => {
-            format!("Clear **{}** stress.", score)
+            format!("Clear **{score}** stress.")
         }
     };
 
     let mut description = if sixes > 1 {
         match roll_type {
             Action => format!("Got **{sixes} sixes** on {pool}d. You take **increased effect**."),
-            Resist => format!("Rolled a **critical** to resist. (Got **{}** sixes.)", sixes),
+            Resist => format!("Rolled a **critical** to resist. (Got **{sixes}** sixes.)"),
             Fortune => format!("Extreme effect, or 5 ticks on the relevant clock. Got **{sixes} sixes** on {pool}d."),
             Clear => String::new(),
         }

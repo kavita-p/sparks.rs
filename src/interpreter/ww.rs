@@ -98,7 +98,7 @@ pub fn wild_roll(
     } else if drop_count > 0 {
         let mut sorted_dice = rolls.dice.clone();
         sorted_dice.sort_by(|a, b| b.cmp(a));
-        sorted_dice[drop_count as usize]
+        sorted_dice[drop_count]
     } else {
         rolls.max
     };
@@ -137,7 +137,7 @@ pub fn wild_roll(
         Crit => return Err("Title received invalid success type for system."),
     };
 
-    let mut title = format!("__{}__ [{}] {}", roll_type, score, title_text);
+    let mut title = format!("__{roll_type}__ [{score}] {title_text}");
     if doubles && !special_roll {
         title += " with a twist";
     };
@@ -192,7 +192,7 @@ mod tests {
 
         let sparks_reply = wild_roll(test_rolls, &Action, false, None);
 
-        assert_eq!(sparks_reply, correct_reply)
+        assert_eq!(sparks_reply, correct_reply);
     }
 
     #[test]
@@ -212,6 +212,6 @@ mod tests {
 
         let sparks_reply = wild_roll(test_rolls, &Action, false, Some(1));
 
-        assert_eq!(sparks_reply, correct_reply)
+        assert_eq!(sparks_reply, correct_reply);
     }
 }

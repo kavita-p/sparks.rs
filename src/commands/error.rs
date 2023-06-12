@@ -19,6 +19,6 @@ pub async fn run(command: &ApplicationCommandInteraction, http: &Http, err: &str
         })
         .await
     {
-        println!("error: {}", why);
+        println!("error: {why}");
     };
 }

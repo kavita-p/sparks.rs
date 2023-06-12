@@ -23,7 +23,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
 
     let (title, status) = if zero_d {
         (
-            format!("Got {} on 0d10 (rolled as 1d10.)", dropped_max),
+            format!("Got {dropped_max} on 0d10 (rolled as 1d10.)"),
             MixedSuccess,
         )
     } else if drop_count >= rolls.dice.len() {
@@ -65,7 +65,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
             zero_d_text
         )
     } else if zero_d {
-        format!("You've asked for a 0d roll! {}", zero_d_text)
+        format!("You've asked for a 0d roll! {zero_d_text}")
     } else if let Some(danger_level) = danger {
         format!(
             "Rolled **{}** on {} {}d10 (dropped {}d.)",
@@ -89,11 +89,10 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
 pub fn test_fallout(score: i64) -> Reply {
     let fallout_scale = if score > 6 { "major" } else { "minor" };
     Reply {
-        title: format!("Rolled {} to test for fallout.", score),
+        title: format!("Rolled {score} to test for fallout."),
         description: format!(
-            "Take **{}** fallout if this roll is \
-            **lower** than your total stress.",
-            fallout_scale
+            "Take **{fallout_scale}** fallout if this roll is \
+            **lower** than your total stress."
         ),
         status: MixedSuccess,
         dice: score.to_string(),
