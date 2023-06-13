@@ -18,7 +18,7 @@ pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply 
     let score = if zero_d { rolls.min } else { rolls.max };
 
     let status = if sixes > 1 {
-        if roll_type == &Clear {
+        if roll_type == &Clear || zero_d {
             FullSuccess
         } else {
             Crit
@@ -57,7 +57,7 @@ pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply 
         }
     };
 
-    let mut description = if sixes > 1 {
+    let mut description = if sixes > 1 && !zero_d {
         match roll_type {
             Action => format!("Got **{sixes} sixes** on {pool}d. You take **increased effect**."),
             Resist => format!("Rolled a **critical** to resist. (Got **{sixes}** sixes.)"),
@@ -117,6 +117,26 @@ mod tests {
         };
 
         let sparks_reply = forged_roll(rolls, &Action, false);
+
+        assert_eq!(sparks_reply, correct_reply);
+    }
+
+    #[test]
+    fn action_multiple_sixes_zero_d() {
+        let correct_reply = Reply {
+            title: String::from("Full success!"),
+            description: String::from("Got **6** on **0d** (rolled as the lower of 2d.)"),
+            status: FullSuccess,
+            dice: "6, 6".into(),
+        };
+
+        let rolls = Rolls {
+            max: 6,
+            min: 6,
+            dice: vec![6, 6],
+        };
+
+        let sparks_reply = forged_roll(rolls, &Action, true);
 
         assert_eq!(sparks_reply, correct_reply);
     }
