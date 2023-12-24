@@ -12,7 +12,8 @@ use crate::{
 pub fn handle_sbr(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
     match roll_opts[0].name.as_str() {
         "check" => {
-            let Some(CommandDataOptionValue::Integer(userpool)) = roll_opts[0].options[0].resolved else {
+            let Some(CommandDataOptionValue::Integer(userpool)) = roll_opts[0].options[0].resolved
+            else {
                 return Err("Couldn't retrieve pool.");
             };
 

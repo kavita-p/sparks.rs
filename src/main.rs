@@ -48,9 +48,7 @@ impl EventHandler for Handler {
         })
         .await;
 
-        println!(
-            "I created the following global slash commands: {global_command:#?}"
-        );
+        println!("I created the following global slash commands: {global_command:#?}");
     }
 }
 
