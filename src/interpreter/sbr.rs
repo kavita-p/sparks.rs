@@ -49,7 +49,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
             _ => return Err("Dice value of out range."),
         };
 
-        (String::from(title_literal), status)
+        (title_literal.to_string(), status)
     };
 
     let zero_d_text = "Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.";
@@ -109,12 +109,11 @@ mod tests {
         let sparks_reply = test_fallout(4);
 
         let correct_reply = Reply {
-            title: String::from("Rolled 4 to test for fallout."),
-            description: String::from(
-                "Take **minor** fallout if this roll is **lower** than your total stress.",
-            ),
+            title: "Rolled 4 to test for fallout.".into(),
+            description: "Take **minor** fallout if this roll is **lower** than your total stress."
+                .into(),
             status: MixedSuccess,
-            dice: "4".to_string(),
+            dice: "4".into(),
         };
 
         assert_eq!(sparks_reply, correct_reply);
@@ -131,10 +130,10 @@ mod tests {
         let sparks_reply = check(test_rolls, false, None);
 
         let correct_reply = Ok(Reply {
-            title: String::from("Clean success!"),
-            description: String::from("Rolled **9** on 3d10."),
+            title: "Clean success!".into(),
+            description: "Rolled **9** on 3d10.".into(),
             status: FullSuccess,
-            dice: "2, 4, 9".to_string(),
+            dice: "2, 4, 9".into(),
         });
 
         assert_eq!(sparks_reply, correct_reply);
@@ -151,10 +150,10 @@ mod tests {
         let sparks_reply = check(test_rolls, false, Some("risky"));
 
         let correct_reply = Ok(Reply {
-            title: String::from("Strained success!"),
-            description: String::from("Rolled **6** on risky 4d10 (dropped 1d.)"),
+            title: "Strained success!".into(),
+            description: "Rolled **6** on risky 4d10 (dropped 1d.)".into(),
             status: MixedSuccess,
-            dice: "2, 4, 6, ~~9~~".to_string(),
+            dice: "2, 4, 6, ~~9~~".into(),
         });
 
         assert_eq!(sparks_reply, correct_reply);
@@ -171,10 +170,10 @@ mod tests {
         let sparks_reply = check(test_rolls, false, Some("desperate"));
 
         let correct_reply = Ok(Reply {
-            title: String::from("Critical success!"),
-            description: String::from("Rolled **10** on desperate 4d10 (dropped 2d.)"),
+            title: "Critical success!".into(),
+            description: "Rolled **10** on desperate 4d10 (dropped 2d.)".into(),
             status: Crit,
-            dice: "~~10~~, 4, ~~10~~, 10".to_string(),
+            dice: "~~10~~, 4, ~~10~~, 10".into(),
         });
 
         assert_eq!(sparks_reply, correct_reply);
@@ -191,10 +190,10 @@ mod tests {
         let sparks_reply = check(test_rolls, false, Some("desperate"));
 
         let correct_reply = Ok(Reply {
-            title: String::from("Got 8 on desperate 2d10."),
-            description: String::from("Your **desperate** 2d check counts as a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice."),
+            title: "Got 8 on desperate 2d10.".into(),
+            description: "Your **desperate** 2d check counts as a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.".into(),
             status: MixedSuccess,
-            dice: "~~8~~, ~~7~~".to_string(),
+            dice: "~~8~~, ~~7~~".into(),
         });
 
         assert_eq!(sparks_reply, correct_reply);

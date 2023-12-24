@@ -39,7 +39,7 @@ pub fn move_roll(rolls: Rolls, stat: i64) -> Reply {
     }
 
     Reply {
-        title: String::from(title_literal),
+        title: title_literal.to_string(),
         description,
         status,
         dice: rolls.join_dice(),
@@ -54,8 +54,8 @@ mod tests {
     #[test]
     fn positive_stat() {
         let correct_reply = Reply {
-            title: String::from("Mixed success!"),
-            description: String::from("Got **9** on 2d6 + 2."),
+            title: "Mixed success!".into(),
+            description: "Got **9** on 2d6 + 2.".into(),
             status: MixedSuccess,
             dice: "3, 4".into(),
         };
@@ -74,8 +74,8 @@ mod tests {
     #[test]
     fn no_stat() {
         let correct_reply = Reply {
-            title: String::from("Full success!"),
-            description: String::from("Got **12** on 2d6.\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable."),
+            title: "Full success!".into(),
+            description: "Got **12** on 2d6.\n\nYou also gain any bonuses that trigger on a **12+** for this move, if applicable.".into(),
             status: Crit,
             dice: "6, 6".into()
         };
@@ -94,8 +94,8 @@ mod tests {
     #[test]
     fn negative_stat() {
         let correct_reply = Reply {
-            title: String::from("Failure!"),
-            description: String::from("Got **3** on 2d6 - 1."),
+            title: "Failure!".into(),
+            description: "Got **3** on 2d6 - 1.".into(),
             status: Failure,
             dice: "3, 1".into(),
         };

@@ -33,25 +33,27 @@ pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply 
     };
 
     let title = match roll_type {
-        Action => String::from(match status {
+        Action => match status {
             Crit => "Critical success!",
             FullSuccess => "Full success!",
             MixedSuccess => "Mixed success!",
             Failure => "Failure!",
-        }),
+        }
+        .to_string(),
         Resist => {
             if status == Crit {
-                String::from("Clear 1 stress!")
+                "Clear 1 stress!".to_string()
             } else {
                 format!("Take **{}** stress to resist.", 6 - score)
             }
         }
-        Fortune => String::from(match status {
+        Fortune => match status {
             Crit => "Critical!",
             FullSuccess => "Increased effect!",
             MixedSuccess => "Standard effect.",
             Failure => "Reduced effect.",
-        }),
+        }
+        .to_string(),
         Clear => {
             format!("Clear **{score}** stress.")
         }
@@ -104,8 +106,8 @@ mod tests {
     #[test]
     fn action_crit() {
         let correct_reply = Reply {
-            title: String::from("Critical success!"),
-            description: String::from("Got **2 sixes** on 3d. You take **increased effect**."),
+            title: "Critical success!".into(),
+            description: "Got **2 sixes** on 3d. You take **increased effect**.".into(),
             status: Crit,
             dice: "6, 2, 6".into(),
         };
@@ -124,8 +126,8 @@ mod tests {
     #[test]
     fn action_multiple_sixes_zero_d() {
         let correct_reply = Reply {
-            title: String::from("Full success!"),
-            description: String::from("Got **6** on **0d** (rolled as the lower of 2d.)"),
+            title: "Full success!".into(),
+            description: "Got **6** on **0d** (rolled as the lower of 2d.)".into(),
             status: FullSuccess,
             dice: "6, 6".into(),
         };
@@ -144,10 +146,9 @@ mod tests {
     #[test]
     fn resist_zero_d() {
         let correct_reply = Reply {
-            title: String::from("Take **4** stress to resist."),
-            description: String::from(
-                "6 minus your score of **2** on **0d** (rolled as the lower of 2d.)",
-            ),
+            title: "Take **4** stress to resist.".into(),
+            description: "6 minus your score of **2** on **0d** (rolled as the lower of 2d.)"
+                .into(),
             status: Failure,
             dice: "2, 4".into(),
         };

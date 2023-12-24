@@ -23,8 +23,8 @@ mod test {
     #[test]
     fn custom_roll_test() {
         let correct_reply = Reply {
-            title: String::from("7"),
-            description: String::from("Rolled 2d15 (max: 7, min: 6)."),
+            title: "7".into(),
+            description: "Rolled 2d15 (max: 7, min: 6).".into(),
             status: RollStatus::FullSuccess,
             dice: "7, 6".into(),
         };
