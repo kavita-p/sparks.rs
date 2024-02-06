@@ -8,7 +8,7 @@ pub async fn run(command: &ApplicationCommandInteraction, http: &Http) {
         .create_interaction_response(http, |response| {
             response
                 .kind(InteractionResponseType::ChannelMessageWithSource)
-                .interaction_response_data(|message| message.content("Buzz!"))
+                .interaction_response_data(|message| message.content("Zap!"))
         })
         .await
     {

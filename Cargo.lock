@@ -893,7 +893,7 @@ dependencies = [
 
 [[package]]
 name = "sparksrs"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "pretty_assertions",
  "rand",
