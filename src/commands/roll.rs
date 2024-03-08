@@ -51,12 +51,16 @@ pub async fn run(command: &ApplicationCommandInteraction, http: &Http) {
                     response
                         .kind(InteractionResponseType::ChannelMessageWithSource)
                         .interaction_response_data(|message| {
+                            if let Some(text) = reply.text {
+                                message.content(text);
+                            };
                             message.embed(|e| {
                                 e.title(reply.title)
                                     .description(reply.description)
                                     .fields(vec![("Rolls".to_string(), reply.dice, true)])
                                     .color(status_colors(&reply.status))
-                            })
+                            });
+                            message
                         })
                 })
                 .await

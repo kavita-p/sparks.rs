@@ -167,6 +167,7 @@ pub fn wild_roll(
         description,
         status,
         dice,
+        text: None,
     })
 }
 
@@ -182,6 +183,7 @@ mod tests {
             description: "Complete success, no drawbacks. Mark/clear a box on a track.".into(),
             status: FullSuccess,
             dice: "2, 6, 4".into(),
+            text: None,
         });
 
         let test_rolls = Rolls {
@@ -202,6 +204,7 @@ mod tests {
             description: "Success with a drawback. Usually marks/clears a box.".into(),
             status: MixedSuccess,
             dice: "2, ~~5~~, 4".into(),
+            text: None,
         });
 
         let test_rolls = Rolls {

@@ -55,6 +55,7 @@ pub struct Reply {
     pub description: String,
     pub status: RollStatus,
     pub dice: String,
+    pub text: Option<String>,
 }
 
 pub mod custom;

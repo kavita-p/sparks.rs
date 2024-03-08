@@ -83,6 +83,7 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
         description,
         status,
         dice: rolls.strike_and_join_dice(drop_count),
+        text: None,
     })
 }
 
@@ -96,6 +97,7 @@ pub fn test_fallout(score: i64) -> Reply {
         ),
         status: MixedSuccess,
         dice: score.to_string(),
+        text: None,
     }
 }
 
@@ -114,6 +116,7 @@ mod tests {
                 .into(),
             status: MixedSuccess,
             dice: "4".into(),
+            text: None,
         };
 
         assert_eq!(sparks_reply, correct_reply);
@@ -134,6 +137,7 @@ mod tests {
             description: "Rolled **9** on 3d10.".into(),
             status: FullSuccess,
             dice: "2, 4, 9".into(),
+            text: None,
         });
 
         assert_eq!(sparks_reply, correct_reply);
@@ -154,6 +158,7 @@ mod tests {
             description: "Rolled **6** on risky 4d10 (dropped 1d.)".into(),
             status: MixedSuccess,
             dice: "2, 4, 6, ~~9~~".into(),
+            text: None,
         });
 
         assert_eq!(sparks_reply, correct_reply);
@@ -174,6 +179,7 @@ mod tests {
             description: "Rolled **10** on desperate 4d10 (dropped 2d.)".into(),
             status: Crit,
             dice: "~~10~~, 4, ~~10~~, 10".into(),
+            text: None,
         });
 
         assert_eq!(sparks_reply, correct_reply);
@@ -194,6 +200,7 @@ mod tests {
             description: "Your **desperate** 2d check counts as a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.".into(),
             status: MixedSuccess,
             dice: "~~8~~, ~~7~~".into(),
+            text: None,
         });
 
         assert_eq!(sparks_reply, correct_reply);

@@ -12,6 +12,7 @@ pub fn roll(rolls: Rolls, count: i64, sides: i64) -> Reply {
         ),
         status: RollStatus::FullSuccess,
         dice: rolls.join_dice(),
+        text: None,
     }
 }
 
@@ -27,6 +28,7 @@ mod test {
             description: "Rolled 2d15 (max: 7, min: 6).".into(),
             status: RollStatus::FullSuccess,
             dice: "7, 6".into(),
+            text: None,
         };
 
         let rolls = Rolls {

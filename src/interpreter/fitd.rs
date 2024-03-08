@@ -95,6 +95,7 @@ pub fn forged_roll(rolls: Rolls, roll_type: &ForgedType, zero_d: bool) -> Reply 
         description,
         status,
         dice: rolls.join_dice(),
+        text: None,
     }
 }
 
@@ -110,6 +111,7 @@ mod tests {
             description: "Got **2 sixes** on 3d. You take **increased effect**.".into(),
             status: Crit,
             dice: "6, 2, 6".into(),
+            text: None,
         };
 
         let rolls = Rolls {
@@ -130,6 +132,7 @@ mod tests {
             description: "Got **6** on **0d** (rolled as the lower of 2d.)".into(),
             status: FullSuccess,
             dice: "6, 6".into(),
+            text: None,
         };
 
         let rolls = Rolls {
@@ -151,6 +154,7 @@ mod tests {
                 .into(),
             status: Failure,
             dice: "2, 4".into(),
+            text: None,
         };
 
         let rolls = Rolls {

@@ -14,5 +14,17 @@ pub fn handle_pbta(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         return Err("Couldn't retrieve stat.");
     };
 
-    Ok(interpreter::pbta::move_roll(Rolls::new(2, 6), stat))
+    let pbta_move = match roll_opts[0].options.get(1) {
+        Some(command) => match &command.resolved {
+            Some(CommandDataOptionValue::String(move_name)) => Some(move_name),
+            _ => return Err("Received move name but did not get a value."),
+        },
+        None => None,
+    };
+
+    Ok(interpreter::pbta::move_roll(
+        Rolls::new(2, 6),
+        stat,
+        pbta_move.cloned(),
+    ))
 }

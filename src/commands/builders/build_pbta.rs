@@ -17,4 +17,11 @@ pub fn build_pbta(
                 .kind(CommandOptionType::Integer)
                 .required(true)
         })
+        .create_sub_option(|move_name| {
+            move_name
+                .name("move name")
+                .description("The name of the move.")
+                .kind(CommandOptionType::String)
+                .required(false)
+        })
 }
