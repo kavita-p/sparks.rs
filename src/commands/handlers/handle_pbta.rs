@@ -14,7 +14,7 @@ pub fn handle_pbta(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         return Err("Couldn't retrieve stat.");
     };
 
-    let pbta_move = match roll_opts[0].options.get(1) {
+    let pbta_move = match roll_opts.get(1) {
         Some(command) => match &command.resolved {
             Some(CommandDataOptionValue::String(move_name)) => Some(move_name),
             _ => return Err("Received move name but did not get a value."),

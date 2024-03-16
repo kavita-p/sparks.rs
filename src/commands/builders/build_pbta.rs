@@ -19,7 +19,7 @@ pub fn build_pbta(
         })
         .create_sub_option(|move_name| {
             move_name
-                .name("move name")
+                .name("move")
                 .description("The name of the move.")
                 .kind(CommandOptionType::String)
                 .required(false)
