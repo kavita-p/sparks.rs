@@ -5,15 +5,10 @@ jobs:
   compile:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release
-      - uses: actions/upload-artifact@v3
+      - uses: actions/checkout@v4
+      - name: build
+        run: cargo build --release
+      - uses: actions/upload-artifact@v4
         with:
           name: sparksrs
           path: target/release/sparksrs
