@@ -1,6 +1,6 @@
 # Sparks!
 
-A Discord bot for indie TRPGs. Now freshly-oxidized.
+A Discord bot for indie TRPGs.
 
 (she/her)
 
