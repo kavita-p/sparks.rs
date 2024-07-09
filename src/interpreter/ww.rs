@@ -90,17 +90,19 @@ pub fn wild_roll(
 
     let drop_count = cut.unwrap_or(0).try_into().unwrap_or(0);
 
-    let doubles = !has_unique_elements(&rolls.dice);
     let overcut = drop_count >= rolls.dice.len();
 
-    let score = if zero_d || overcut {
-        rand::thread_rng().gen_range(1..=6)
+    let (score, doubles) = if zero_d || overcut {
+        (rand::thread_rng().gen_range(1..=6), false)
     } else if drop_count > 0 {
         let mut sorted_dice = rolls.dice.clone();
         sorted_dice.sort_by(|a, b| b.cmp(a));
-        sorted_dice[drop_count]
+        (
+            sorted_dice[drop_count],
+            !has_unique_elements(&sorted_dice[drop_count..]),
+        )
     } else {
-        rolls.max
+        (rolls.max, !has_unique_elements(&rolls.dice))
     };
 
     let status = if zero_d || overcut && !special_roll {
@@ -211,6 +213,27 @@ mod tests {
             min: 2,
             max: 5,
             dice: vec![2, 5, 4],
+        };
+
+        let sparks_reply = wild_roll(test_rolls, &Action, false, Some(1));
+
+        assert_eq!(sparks_reply, correct_reply);
+    }
+
+    #[test]
+    fn doubles_but_cut() {
+        let correct_reply = Ok(Reply {
+            title: "__Action__ [4] Conflict".into(),
+            description: "Success with a drawback. Usually marks/clears a box.".into(),
+            status: MixedSuccess,
+            dice: "~~4~~, 2, 4".into(),
+            text: None,
+        });
+
+        let test_rolls = Rolls {
+            min: 2,
+            max: 4,
+            dice: vec![4, 2, 4],
         };
 
         let sparks_reply = wild_roll(test_rolls, &Action, false, Some(1));
