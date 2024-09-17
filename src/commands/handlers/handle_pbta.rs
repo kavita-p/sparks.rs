@@ -14,7 +14,7 @@ pub fn handle_pbta(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         return Err("Couldn't retrieve stat.");
     };
 
-    let pbta_move = match roll_opts.get(1) {
+    let pbta_move = match roll_opts.iter().find(|&c| c.name == "move") {
         Some(command) => match &command.resolved {
             Some(CommandDataOptionValue::String(move_name)) => Some(move_name),
             _ => return Err("Received move name but did not get a value."),
@@ -22,9 +22,23 @@ pub fn handle_pbta(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
         None => None,
     };
 
+    let advantages = match roll_opts
+        .iter()
+        .find(|&c| c.name == "advantage_or_disadvantage")
+    {
+        Some(command) => match &command.resolved {
+            Some(CommandDataOptionValue::Integer(net_advantage)) => Some(net_advantage),
+            _ => return Err("Received advantages option but did not get a value."),
+        },
+        None => None,
+    };
+
+    let dice_count = advantages.map_or(2, |n| 2 + n.saturating_abs());
+
     Ok(interpreter::pbta::move_roll(
-        Rolls::new(2, 6),
+        Rolls::new(dice_count, 6),
         stat,
         pbta_move.cloned(),
+        advantages.copied(),
     ))
 }

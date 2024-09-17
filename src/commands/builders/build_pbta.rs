@@ -24,4 +24,11 @@ pub fn build_pbta(
                 .kind(CommandOptionType::String)
                 .required(false)
         })
+        .create_sub_option(|advantage| {
+            advantage
+                .name("advantage_or_disadvantage")
+                .description("Advantages and disadvantages. Use a negative number if you have more disadvantages.")
+                .kind(CommandOptionType::Integer)
+                .required(false)
+        })
 }

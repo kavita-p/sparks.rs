@@ -8,7 +8,7 @@ Sparks' dice-rolling commands are all subcommands of `/roll`. For example, `/rol
 
 - `/roll forged`: rolls a Forged in the Dark roll. Requires both the number of d6s to roll and the type of roll.
 
-- `/roll pbta`: rolls a Powered by the Apocalypse move. Requires the stat, including any bonuses to the roll (i.e. +1 forwards/ongoings, move-related bonuses, etc.)
+- `/roll pbta`: rolls a Powered by the Apocalypse move. Requires the stat, including any bonuses to the roll (i.e. +1 forwards/ongoings, move-related bonuses, etc.) Optionally accepts a combined total of advantages and disadvantages.
 
 - `/roll wild`: rolls a Wild Words roll. Requires both the number of d6s to roll and the type of roll, and optionally the number of dice to cut.
 
