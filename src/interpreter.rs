@@ -12,6 +12,22 @@ pub enum RollStatus {
 
 #[derive(PartialEq, Eq, Debug, EnumString)]
 #[strum(ascii_case_insensitive)]
+pub enum ConfidenceLevel {
+    Confidence,
+    Desperation,
+}
+
+impl Display for ConfidenceLevel {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::Confidence => write!(f, "confidence"),
+            Self::Desperation => write!(f, "desperation"),
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, Debug, EnumString)]
+#[strum(ascii_case_insensitive)]
 pub enum ForgedType {
     Action,
     Resist,

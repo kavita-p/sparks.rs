@@ -37,6 +37,21 @@ impl Rolls {
     }
 
     #[must_use]
+    pub fn join_dice_confidently(self, original: i64, replacement: i64) -> String {
+        self.dice
+            .into_iter()
+            .map(|d| {
+                if d == original {
+                    format!("~~{original}~~ (treated as **{replacement}**)")
+                } else {
+                    d.to_string()
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(", ")
+    }
+
+    #[must_use]
     pub fn strike_and_join_dice(self, drop_count: usize) -> String {
         let mut largest_dice = self
             .dice

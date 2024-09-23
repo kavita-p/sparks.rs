@@ -35,10 +35,24 @@ pub fn handle_pbta(roll_opts: &[CommandDataOption]) -> Result<Reply, &str> {
 
     let dice_count = advantages.map_or(2, |n| 2 + n.saturating_abs());
 
-    Ok(interpreter::pbta::move_roll(
+    let confidence = match roll_opts
+        .iter()
+        .find(|&c| c.name == "confidence_or_desperation")
+    {
+        Some(command) => match &command.resolved {
+            Some(CommandDataOptionValue::String(confidence_value)) => {
+                Some(confidence_value.as_str())
+            }
+            _ => return Err("Received confidence option but did not get a value."),
+        },
+        None => None,
+    };
+
+    interpreter::pbta::move_roll(
         Rolls::new(dice_count, 6),
         stat,
         pbta_move.cloned(),
         advantages.copied(),
-    ))
+        confidence,
+    )
 }

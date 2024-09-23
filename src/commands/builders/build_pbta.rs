@@ -31,4 +31,13 @@ pub fn build_pbta(
                 .kind(CommandOptionType::Integer)
                 .required(false)
         })
+        .create_sub_option(|confidence| {
+            confidence
+                .name("confidence_or_desperation")
+                .description("Treat 1s as 6s (confidence) or vice versa (desperation).")
+                .kind(CommandOptionType::String)
+                .add_string_choice("confidence", "confidence")
+                .add_string_choice("desperation", "desperation")
+                .required(false)
+        })
 }
