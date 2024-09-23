@@ -29,17 +29,7 @@ impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("Sparks, ready! Logged in as {}", ready.user.name);
 
-        let existing_commands = Command::get_global_application_commands(&ctx.http)
-            .await
-            .expect("Should be able to retrieve commands.");
-
-        for command in existing_commands {
-            Command::delete_global_application_command(&ctx.http, command.id)
-                .await
-                .expect("Should be able to delete commands.");
-        }
-
-        let updated_commands = Command::set_global_application_commands(&ctx.http, |command| {
+        let commands = Command::set_global_application_commands(&ctx.http, |command| {
             command
                 .create_application_command(|command| commands::buzz::register(command))
                 .create_application_command(|command| commands::flicker::register(command))
@@ -49,13 +39,10 @@ impl EventHandler for Handler {
         .await
         .expect("Should be able to create commands.");
 
-        let command_names: Vec<String> = updated_commands
-            .into_iter()
-            .map(|command| command.name)
-            .collect();
+        let command_names: Vec<String> = commands.into_iter().map(|command| command.name).collect();
 
         println!(
-            "I created the following global slash commands: {}",
+            "I created or updated the following global slash commands: {}",
             command_names.join(", ")
         );
     }
