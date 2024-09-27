@@ -1,37 +1,27 @@
-use serenity::builder::CreateApplicationCommand;
-use serenity::http::Http;
-use serenity::model::application::interaction::application_command::ApplicationCommandInteraction;
-use serenity::model::prelude::interaction::InteractionResponseType;
-use serenity::utils::Color;
+use crate::{Context, Error};
+use poise::serenity_prelude as serenity;
 
-pub async fn run(command: &ApplicationCommandInteraction, http: &Http) {
-    let help_text = include_str!("help_text.md");
+#[poise::command(
+    slash_command,
+    description_localized("en-US", "Replies with the help text for this bot.")
+)]
+pub async fn help(ctx: Context<'_>) -> Result<(), Error> {
+    let help_text: &str = include_str!("help_text.md");
 
-    if let Err(why) = command
-        .create_interaction_response(http, |response| {
-            response
-                .kind(InteractionResponseType::ChannelMessageWithSource)
-                .interaction_response_data(|message| {
-                    message.embed(|e| {
-                        e.title("Info")
-                            .description(help_text)
-                            .fields(vec![(
-                                "Author".to_string(),
-                                "kavita#7223".to_string(),
-                                true,
-                            )])
-                            .color(Color::BLUE)
-                    })
-                })
-        })
-        .await
-    {
-        println!("error: {why}");
-    };
-}
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("Info")
+                .description(help_text)
+                .fields(vec![(
+                    "Author".to_string(),
+                    "[kavita](https://yrgirlkv.itch.io)".to_string(),
+                    true,
+                )])
+                .color(serenity::Color::BLUE),
+        ),
+    )
+    .await?;
 
-pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
-    command
-        .name("sparks-help")
-        .description("Replies with help for this bot.")
+    Ok(())
 }

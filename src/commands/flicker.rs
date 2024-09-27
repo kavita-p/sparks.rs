@@ -1,21 +1,11 @@
-use serenity::builder::CreateApplicationCommand;
-use serenity::http::Http;
-use serenity::model::application::interaction::application_command::ApplicationCommandInteraction;
-use serenity::model::prelude::interaction::InteractionResponseType;
+use crate::{Context, Error};
 
-pub async fn run(command: &ApplicationCommandInteraction, http: &Http) {
-    if let Err(why) = command
-        .create_interaction_response(http, |response| {
-            response
-                .kind(InteractionResponseType::ChannelMessageWithSource)
-                .interaction_response_data(|message| message.content("Hummmmmmmmmm...!"))
-        })
-        .await
-    {
-        println!("error: {why}");
-    };
-}
+#[poise::command(
+    slash_command,
+    description_localized("en-US", "Replies with \"Hummmmmmmmmm...!\"")
+)]
+pub async fn flicker(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.say("Hummmmmmmmmm...!").await?;
 
-pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
-    command.name("flicker").description("Replies with Hum.")
+    Ok(())
 }

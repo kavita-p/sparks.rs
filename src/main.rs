@@ -1,69 +1,83 @@
-use std::env;
+#![warn(clippy::str_to_string)]
 
-use serenity::async_trait;
-use serenity::model::application::command::Command;
-use serenity::model::application::interaction::Interaction;
-use serenity::model::gateway::Ready;
-use serenity::prelude::*;
+use poise::serenity_prelude as serenity;
+use sparksrs::{commands, Data, Error};
+use std::env::var;
 
-use sparksrs::commands;
+// Custom user data passed to all command functions
 
-struct Handler;
-
-#[async_trait]
-impl EventHandler for Handler {
-    async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        if let Interaction::ApplicationCommand(command) = interaction {
-            println!("Received command interaction: {command:#?}");
-
-            match command.data.name.as_str() {
-                "buzz" => commands::buzz::run(&command, &ctx.http).await,
-                "flicker" => commands::flicker::run(&command, &ctx.http).await,
-                "roll" => commands::roll::run(&command, &ctx.http).await,
-                "sparks-help" => commands::help::run(&command, &ctx.http).await,
-                _ => commands::error::run(&command, &ctx.http, "Received unknown command.").await,
+async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
+    // This is our custom error handler
+    // They are many errors that can occur, so we only handle the ones we want to customize
+    // and forward the rest to the default handler
+    match error {
+        poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {error:?}"),
+        poise::FrameworkError::Command { error, ctx, .. } => {
+            println!("Error in command `{}`: {:?}", ctx.command().name, error,);
+        }
+        error => {
+            if let Err(e) = poise::builtins::on_error(error).await {
+                println!("Error while handling error: {e}");
             }
         }
-    }
-
-    async fn ready(&self, ctx: Context, ready: Ready) {
-        println!("Sparks, ready! Logged in as {}", ready.user.name);
-
-        let commands = Command::set_global_application_commands(&ctx.http, |command| {
-            command
-                .create_application_command(|command| commands::buzz::register(command))
-                .create_application_command(|command| commands::flicker::register(command))
-                .create_application_command(|command| commands::roll::register(command))
-                .create_application_command(|command| commands::help::register(command))
-        })
-        .await
-        .expect("Should be able to create commands.");
-
-        let command_names: Vec<String> = commands.into_iter().map(|command| command.name).collect();
-
-        println!(
-            "I created or updated the following global slash commands: {}",
-            command_names.join(", ")
-        );
     }
 }
 
 #[tokio::main]
 async fn main() {
-    // Configure the client with your Discord bot token in the environment.
-    let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
+    // FrameworkOptions contains all of poise's configuration option in one struct
+    // Every option can be omitted to use its default value
+    let options = poise::FrameworkOptions {
+        commands: vec![
+            commands::help::help(),
+            commands::buzz::buzz(),
+            commands::flicker::flicker(),
+            commands::roll::roll(),
+        ],
+        // The global error handler for all error cases that may occur
+        on_error: |error| Box::pin(on_error(error)),
+        // This code is run before every command
+        pre_command: |ctx| {
+            Box::pin(async move {
+                println!("Executing command {}...", ctx.command().qualified_name);
+            })
+        },
+        // This code is run after a command if it was successful (returned Ok)
+        post_command: |ctx| {
+            Box::pin(async move {
+                println!("Executed command {}!", ctx.command().qualified_name);
+            })
+        },
+        event_handler: |_ctx, event, _framework, _data| {
+            Box::pin(async move {
+                println!(
+                    "Got an event in event handler: {:?}",
+                    event.snake_case_name()
+                );
+                Ok(())
+            })
+        },
+        ..Default::default()
+    };
 
-    // Build our client.
-    let mut client = Client::builder(token, GatewayIntents::empty())
-        .event_handler(Handler)
-        .await
-        .expect("Error creating client");
+    let framework = poise::Framework::builder()
+        .setup(move |ctx, ready, framework| {
+            Box::pin(async move {
+                println!("Sparks, ready! Logged in as {}", ready.user.name);
+                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+                Ok(Data {})
+            })
+        })
+        .options(options)
+        .build();
 
-    // Finally, start a single shard, and start listening to events.
-    //
-    // Shards will automatically attempt to reconnect, and will perform
-    // exponential backoff until it reconnects.
-    if let Err(why) = client.start().await {
-        println!("Client error: {why:?}");
-    }
+    let token = var("DISCORD_TOKEN")
+        .expect("Missing `DISCORD_TOKEN` env var, see README for more information.");
+    let intents = serenity::GatewayIntents::empty();
+
+    let client = serenity::ClientBuilder::new(token, intents)
+        .framework(framework)
+        .await;
+
+    client.unwrap().start().await.unwrap();
 }

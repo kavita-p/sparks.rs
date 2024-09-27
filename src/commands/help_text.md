@@ -1,4 +1,4 @@
-Hi! This is the help info for Sparks, the indie TRPG Discord bot.
+Hi! This is the help info for Sparks, the indie TTRPG Discord bot.
 
 Sparks' dice-rolling commands are all subcommands of `/roll`. For example, `/roll sbr fallout` rolls a Sparked by Resistance fallout test. Her full list of commands is as follows:
 
@@ -8,7 +8,7 @@ Sparks' dice-rolling commands are all subcommands of `/roll`. For example, `/rol
 
 - `/roll forged`: rolls a Forged in the Dark roll. Requires both the number of d6s to roll and the type of roll.
 
-- `/roll pbta`: rolls a Powered by the Apocalypse move. Requires the stat, including any bonuses to the roll (i.e. +1 forwards/ongoings, move-related bonuses, etc.) Optionally accepts a combined total of advantages and disadvantages.
+- `/roll pbta`: rolls a Powered by the Apocalypse move. Requires the stat, including any bonuses to the roll (i.e. +1 forwards/ongoings, move-related bonuses, etc.) Optionally accepts any of: a combined total of advantages and disadvantages, a confidence level, and a move name.
 
 - `/roll wild`: rolls a Wild Words roll. Requires both the number of d6s to roll and the type of roll, and optionally the number of dice to cut.
 
@@ -20,4 +20,4 @@ Sparks' dice-rolling commands are all subcommands of `/roll`. For example, `/rol
 
 - `/sparks-help`: Sparks will reproduce these instructions.
 
-If you encounter a bug while using Sparks, you can report it at https://yrgirlkv.itch.io/sparks.
+If you encounter a bug while using Sparks, you can report it at [yrgirlkv.itch.io/sparks](https://yrgirlkv.itch.io/sparks).

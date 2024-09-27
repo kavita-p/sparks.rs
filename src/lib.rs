@@ -1,12 +1,15 @@
 use std::collections::HashSet;
 use std::hash::Hash;
 
-use interpreter::RollStatus;
 use rand::distributions::Uniform;
 use rand::Rng;
 
 pub mod commands;
 mod interpreter;
+
+pub struct Data {} // User data, which is stored and accessible in all command invocations
+pub type Error = Box<dyn std::error::Error + Send + Sync>;
+type Context<'a> = poise::Context<'a, Data, Error>;
 
 pub struct Rolls {
     pub max: i64,

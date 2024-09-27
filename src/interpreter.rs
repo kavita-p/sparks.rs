@@ -1,6 +1,5 @@
 use core::fmt;
 use std::fmt::Display;
-use strum_macros::EnumString;
 
 #[derive(PartialEq, Eq, Debug)]
 pub enum RollStatus {
@@ -10,8 +9,7 @@ pub enum RollStatus {
     Failure,
 }
 
-#[derive(PartialEq, Eq, Debug, EnumString)]
-#[strum(ascii_case_insensitive)]
+#[derive(PartialEq, Eq, Debug, poise::ChoiceParameter)]
 pub enum ConfidenceLevel {
     Confidence,
     Desperation,
@@ -26,26 +24,37 @@ impl Display for ConfidenceLevel {
     }
 }
 
-#[derive(PartialEq, Eq, Debug, EnumString)]
-#[strum(ascii_case_insensitive)]
+#[derive(PartialEq, Eq, Debug, poise::ChoiceParameter)]
 pub enum ForgedType {
+    #[name = "action"]
     Action,
+    #[name = "resist"]
     Resist,
+    #[name = "fortune/downtime"]
     Fortune,
+    #[name = "clear stress"]
     Clear,
 }
 
-#[derive(PartialEq, Eq, Debug, EnumString)]
-#[strum(ascii_case_insensitive)]
+#[derive(PartialEq, Eq, Debug, poise::ChoiceParameter)]
 pub enum WildType {
+    #[name = "Action"]
     Action,
+    #[name = "Attack"]
     Attack,
+    #[name = "Defense"]
     Defense,
+    #[name = "Acquisition"]
     Acquisition,
+    #[name = "Creation"]
     Creation,
+    #[name = "Recovery"]
     Recovery,
+    #[name = "Ratings"]
     Ratings,
+    #[name = "Watch"]
     Watch,
+    #[name = "Weather-watching"]
     Weather,
 }
 
