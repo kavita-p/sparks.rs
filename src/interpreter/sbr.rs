@@ -6,14 +6,11 @@ use crate::{
     Rolls,
 };
 
-pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, &str> {
-    let drop_count = match danger {
-        Some("risky") => 1,
-        Some("desperate") => 2,
-        _ => 0,
-    };
+pub fn check(rolls: Rolls, zero_d: bool, cut: Option<i64>) -> Result<Reply, &'static str> {
+    let drop_count = cut.unwrap_or(0).try_into().unwrap_or(0);
+    let overcut = drop_count >= rolls.dice.len() && !zero_d;
 
-    let dropped_max = if drop_count > 0 && drop_count < rolls.dice.len() {
+    let score = if drop_count > 0 && !overcut {
         let mut sorted_dice = rolls.dice.clone();
         sorted_dice.sort_by(|a, b| b.cmp(a));
         sorted_dice[drop_count]
@@ -21,61 +18,40 @@ pub fn check(rolls: Rolls, zero_d: bool, danger: Option<&str>) -> Result<Reply, 
         rolls.max
     };
 
-    let (title, status) = if zero_d {
-        (
-            format!("Got {dropped_max} on 0d10 (rolled as 1d10.)"),
-            MixedSuccess,
-        )
-    } else if drop_count >= rolls.dice.len() {
+    let (title, description, status) = if zero_d || overcut {
+        let desc_dice_count = if zero_d {
+            "0d".into()
+        } else {
+            format!("{}d (drop {})", rolls.dice.len(), drop_count)
+        };
+
         (
             format!(
-                "Got {} on {} {}d10.",
-                dropped_max,
-                match danger {
-                    Some(danger) => danger,
-                    None => return Err("Told to drop dice, but didn't receive a danger level!"),
-                },
+                "Got {} on {}d10.",
+                score,
                 rolls.dice.len()
             ),
+            format!("Your {} check was rolled with 0d! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.", desc_dice_count),
             MixedSuccess,
         )
     } else {
-        let (title_literal, status) = match dropped_max {
+        let (title_literal, status) = match score {
             10 => ("Critical success!", Crit),
             8 | 9 => ("Clean success!", FullSuccess),
             6 | 7 => ("Strained success!", MixedSuccess),
             2..=5 => ("Failure!", Failure),
             1 => ("Critical failure!", Failure),
-            _ => return Err("Dice value of out range."),
+            _ => return Err("SbR dice value out of range."),
+        };
+        let mut desc = format!("Rolled **{score}** on {}d10", rolls.dice.len());
+
+        if drop_count > 0 {
+            desc.push_str(&format!(" (cut {drop_count}d.)"));
+        } else {
+            desc.push('.')
         };
 
-        (title_literal.to_string(), status)
-    };
-
-    let zero_d_text = "Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.";
-
-    let description = if drop_count >= rolls.dice.len() && drop_count != 0 {
-        format!(
-            "Your **{}** {}d check counts as a 0d roll! {}",
-            match danger {
-                Some(danger) => danger,
-                None => return Err("Told to drop dice, but didn't receive a danger level count."),
-            },
-            rolls.dice.len(),
-            zero_d_text
-        )
-    } else if zero_d {
-        format!("You've asked for a 0d roll! {zero_d_text}")
-    } else if let Some(danger_level) = danger {
-        format!(
-            "Rolled **{}** on {} {}d10 (dropped {}d.)",
-            dropped_max,
-            danger_level,
-            rolls.dice.len(),
-            drop_count
-        )
-    } else {
-        format!("Rolled **{}** on {}d10.", dropped_max, rolls.dice.len())
+        (title_literal.to_string(), desc, status)
     };
 
     Ok(Reply {
@@ -151,11 +127,11 @@ mod tests {
             dice: vec![2, 4, 6, 9],
         };
 
-        let sparks_reply = check(test_rolls, false, Some("risky"));
+        let sparks_reply = check(test_rolls, false, Some(1));
 
         let correct_reply = Ok(Reply {
             title: "Strained success!".into(),
-            description: "Rolled **6** on risky 4d10 (dropped 1d.)".into(),
+            description: "Rolled **6** on 4d10 (cut 1d.)".into(),
             status: MixedSuccess,
             dice: "2, 4, 6, ~~9~~".into(),
             text: None,
@@ -172,11 +148,11 @@ mod tests {
             dice: vec![10, 4, 10, 10],
         };
 
-        let sparks_reply = check(test_rolls, false, Some("desperate"));
+        let sparks_reply = check(test_rolls, false, Some(2));
 
         let correct_reply = Ok(Reply {
             title: "Critical success!".into(),
-            description: "Rolled **10** on desperate 4d10 (dropped 2d.)".into(),
+            description: "Rolled **10** on 4d10 (cut 2d.)".into(),
             status: Crit,
             dice: "~~10~~, 4, ~~10~~, 10".into(),
             text: None,
@@ -193,15 +169,17 @@ mod tests {
             dice: vec![8, 7],
         };
 
-        let sparks_reply = check(test_rolls, false, Some("desperate"));
+        let sparks_reply = check(test_rolls, false, Some(2));
 
-        let correct_reply = Ok(Reply {
-            title: "Got 8 on desperate 2d10.".into(),
-            description: "Your **desperate** 2d check counts as a 0d roll! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.".into(),
-            status: MixedSuccess,
-            dice: "~~8~~, ~~7~~".into(),
-            text: None,
-        });
+        let correct_reply = Ok(
+            Reply {
+                title: "Got 8 on 2d10.".into(),
+                description: "Your 2d (drop 2) check was rolled with 0d! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.".into(),
+                status: MixedSuccess,
+                dice: "~~8~~, ~~7~~".into(),
+                text: None,
+            }
+        );
 
         assert_eq!(sparks_reply, correct_reply);
     }

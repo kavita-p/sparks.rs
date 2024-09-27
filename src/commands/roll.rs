@@ -134,7 +134,9 @@ pub async fn sbr_check(
     #[description = "The size of your dice pool."]
     #[min = 0]
     pool: i64,
-    #[description = "Whether the check is risky or desperate."] danger: Option<String>,
+    #[description = "Whether the check is risky or desperate."]
+    #[min = 1]
+    drop_count: Option<i64>,
 ) -> Result<(), Error> {
     let (pool, zero_d) = {
         if pool == 0 {
@@ -144,7 +146,7 @@ pub async fn sbr_check(
         }
     };
 
-    let reply = interpreter::sbr::check(Rolls::new(pool, 10), zero_d, danger.as_deref());
+    let reply = interpreter::sbr::check(Rolls::new(pool, 10), zero_d, drop_count);
     ctx.send(build_roll_reply(reply?)).await?;
 
     Ok(())

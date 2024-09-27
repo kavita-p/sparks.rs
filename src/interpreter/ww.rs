@@ -155,7 +155,8 @@ pub fn wild_roll(
     };
 
     if overcut && drop_count > 0 && zero_d {
-        description += "\n\n*What are you even doing that you had to cut from a roll of 0 dice?*";
+        description +=
+            "\n\n*Also, hey: what are you even doing that you're cutting  from a roll of 0 dice?*";
     };
 
     let dice = if zero_d || overcut {
