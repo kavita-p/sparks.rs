@@ -47,10 +47,10 @@ fn build_roll_reply(reply: Reply) -> CreateReply {
 pub async fn custom(
     ctx: Context<'_>,
     #[description = "The number of dice you'd like to roll."]
-    #[min = 1_i64]
+    #[min = 1]
     count: i64,
     #[description = "The number of sides per die."]
-    #[min = 1_i64]
+    #[min = 1]
     sides: i64,
 ) -> Result<(), Error> {
     let reply = interpreter::custom::roll(Rolls::new(count, sides), count, sides);
