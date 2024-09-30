@@ -1,5 +1,6 @@
 #![warn(clippy::str_to_string)]
 
+use color_eyre::eyre::Result;
 use poise::serenity_prelude as serenity;
 use sparksrs::{commands, Data, Error};
 use std::env::var;
@@ -24,7 +25,8 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
+    color_eyre::install()?;
     // FrameworkOptions contains all of poise's configuration option in one struct
     // Every option can be omitted to use its default value
     let options = poise::FrameworkOptions {
@@ -80,4 +82,5 @@ async fn main() {
         .await;
 
     client.unwrap().start().await.unwrap();
+    Ok(())
 }
