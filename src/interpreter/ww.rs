@@ -15,11 +15,7 @@ use crate::{
 
 use super::RollStatus;
 
-fn create_description(
-    status: &RollStatus,
-    roll_type: &WildType,
-    doubles: bool,
-) -> Result<String, &'static str> {
+fn create_description(status: &RollStatus, roll_type: &WildType, doubles: bool) -> String {
     let mut description = match status {
         FullSuccess => {
             match roll_type {
@@ -61,7 +57,7 @@ fn create_description(
                 Weather =>  "Driving rain/hail (lowers visibility), blazing sunshine (potential heatstroke), living storm or bizarre weather phenomenon.",
             }
         }
-        Crit => return Err("Description received invalid success type for system.")
+        Crit => unreachable!()
     }.to_string();
 
     if doubles {
@@ -77,15 +73,10 @@ fn create_description(
         }
     };
 
-    Ok(description)
+    description
 }
 
-pub fn wild_roll(
-    rolls: Rolls,
-    roll_type: &WildType,
-    zero_d: bool,
-    cut: Option<i64>,
-) -> Result<Reply, &'static str> {
+pub fn wild_roll(rolls: Rolls, roll_type: &WildType, zero_d: bool, cut: Option<i64>) -> Reply {
     let special_roll = roll_type == &Watch || roll_type == &Weather;
 
     let drop_count = cut.unwrap_or(0).try_into().unwrap_or(0);
@@ -116,7 +107,7 @@ pub fn wild_roll(
             6 => FullSuccess,
             4 | 5 => MixedSuccess,
             1..=3 => Failure,
-            _ => return Err("Dice value out of bounds."),
+            _ => unreachable!(),
         }
     };
 
@@ -136,7 +127,7 @@ pub fn wild_roll(
             Weather => "A Change for the Worse",
             _ => "Disaster",
         },
-        Crit => return Err("Title received invalid success type for system."),
+        Crit => unreachable!(),
     };
 
     let mut title = format!("__{roll_type}__ [{score}] {title_text}");
@@ -144,7 +135,7 @@ pub fn wild_roll(
         title += " with a twist";
     };
 
-    let mut description = create_description(&status, roll_type, doubles)?;
+    let mut description = create_description(&status, roll_type, doubles);
 
     if overcut {
         description += "\n\n**Overcut**\nYou cut your entire dice pool! Rolled a single d6, treating triumphs as conflicts.";
@@ -165,13 +156,13 @@ pub fn wild_roll(
         rolls.strike_and_join_dice(drop_count)
     };
 
-    Ok(Reply {
+    Reply {
         title,
         description,
         status,
         dice,
         text: None,
-    })
+    }
 }
 
 #[cfg(test)]
@@ -181,13 +172,13 @@ mod tests {
 
     #[test]
     fn action_cut_0() {
-        let correct_reply = Ok(Reply {
+        let correct_reply = Reply {
             title: "__Action__ [6] Triumph".into(),
             description: "Complete success, no drawbacks. Mark/clear a box on a track.".into(),
             status: FullSuccess,
             dice: "2, 6, 4".into(),
             text: None,
-        });
+        };
 
         let test_rolls = Rolls {
             min: 2,
@@ -202,13 +193,13 @@ mod tests {
 
     #[test]
     fn action_cut_1() {
-        let correct_reply = Ok(Reply {
+        let correct_reply = Reply {
             title: "__Action__ [4] Conflict".into(),
             description: "Success with a drawback. Usually marks/clears a box.".into(),
             status: MixedSuccess,
             dice: "2, ~~5~~, 4".into(),
             text: None,
-        });
+        };
 
         let test_rolls = Rolls {
             min: 2,
@@ -223,13 +214,13 @@ mod tests {
 
     #[test]
     fn doubles_but_cut() {
-        let correct_reply = Ok(Reply {
+        let correct_reply = Reply {
             title: "__Action__ [4] Conflict".into(),
             description: "Success with a drawback. Usually marks/clears a box.".into(),
             status: MixedSuccess,
             dice: "~~4~~, 2, 4".into(),
             text: None,
-        });
+        };
 
         let test_rolls = Rolls {
             min: 2,

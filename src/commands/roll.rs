@@ -147,7 +147,7 @@ pub async fn sbr_check(
     };
 
     let reply = interpreter::sbr::check(Rolls::new(pool, 10), zero_d, drop_count);
-    ctx.send(build_roll_reply(reply?)).await?;
+    ctx.send(build_roll_reply(reply)).await?;
 
     Ok(())
 }
@@ -191,6 +191,6 @@ pub async fn wild(
 
     let reply = interpreter::ww::wild_roll(Rolls::new(pool, 6), &wild_type, zero_d, cut);
 
-    ctx.send(build_roll_reply(reply?)).await?;
+    ctx.send(build_roll_reply(reply)).await?;
     Ok(())
 }
