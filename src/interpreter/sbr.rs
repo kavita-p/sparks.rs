@@ -6,7 +6,7 @@ use crate::{
     Rolls,
 };
 
-pub fn check(rolls: Rolls, zero_d: bool, cut: Option<i64>) -> Reply  {
+pub fn check(rolls: Rolls, zero_d: bool, cut: Option<i64>) -> Reply {
     let drop_count = cut.unwrap_or(0).try_into().unwrap_or(0);
     let overcut = drop_count >= rolls.dice.len() && !zero_d;
 
@@ -171,7 +171,7 @@ mod tests {
 
         let sparks_reply = check(test_rolls, false, Some(2));
 
-        let correct_reply = 
+        let correct_reply =
             Reply {
                 title: "Got 8 on 2d10.".into(),
                 description: "Your 2d (drop 2) check was rolled with 0d! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.".into(),
