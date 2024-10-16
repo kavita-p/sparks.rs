@@ -7,7 +7,9 @@ use rand::Rng;
 pub mod commands;
 mod interpreter;
 
-pub struct Data {} // User data, which is stored and accessible in all command invocations
+// i don't understand the data struct or why poise has its own special errors either
+// but once again i truly don't care to learn
+pub struct Data {}
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 

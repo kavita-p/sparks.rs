@@ -5,12 +5,9 @@ use poise::serenity_prelude as serenity;
 use sparksrs::{commands, Data, Error};
 use std::env::var;
 
-// Custom user data passed to all command functions
-
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
-    // This is our custom error handler
-    // They are many errors that can occur, so we only handle the ones we want to customize
-    // and forward the rest to the default handler
+    // this is a custom error handler poise included that i don't understand
+    // however i also do not care to learn
     match error {
         poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {error:?}"),
         poise::FrameworkError::Command { error, ctx, .. } => {
@@ -27,8 +24,6 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
 #[tokio::main]
 async fn main() -> Result<()> {
     color_eyre::install()?;
-    // FrameworkOptions contains all of poise's configuration option in one struct
-    // Every option can be omitted to use its default value
     let options = poise::FrameworkOptions {
         commands: vec![
             commands::help::help(),
@@ -36,15 +31,13 @@ async fn main() -> Result<()> {
             commands::flicker::flicker(),
             commands::roll::roll(),
         ],
-        // The global error handler for all error cases that may occur
+        // i also mostly don't understand anything after this line
         on_error: |error| Box::pin(on_error(error)),
-        // This code is run before every command
         pre_command: |ctx| {
             Box::pin(async move {
                 println!("Executing command {}...", ctx.command().qualified_name);
             })
         },
-        // This code is run after a command if it was successful (returned Ok)
         post_command: |ctx| {
             Box::pin(async move {
                 println!("Executed command {}!", ctx.command().qualified_name);
