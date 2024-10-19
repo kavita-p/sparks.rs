@@ -58,7 +58,7 @@ pub fn check(rolls: Rolls, zero_d: bool, cut: Option<i64>) -> Reply {
         title,
         description,
         status,
-        dice: rolls.strike_and_join_dice(drop_count),
+        dice: rolls.join_cut_dice(drop_count),
         text: None,
     }
 }

@@ -57,7 +57,7 @@ impl Rolls {
     }
 
     #[must_use]
-    pub fn strike_and_join_dice(self, drop_count: usize) -> String {
+    pub fn join_cut_dice(self, drop_count: usize) -> String {
         let mut largest_dice = self
             .dice
             .into_iter()

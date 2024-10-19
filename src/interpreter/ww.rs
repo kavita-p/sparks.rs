@@ -153,7 +153,7 @@ pub fn wild_roll(rolls: Rolls, roll_type: &WildType, zero_d: bool, cut: Option<i
     let dice = if zero_d || overcut {
         score.to_string()
     } else {
-        rolls.strike_and_join_dice(drop_count)
+        rolls.join_cut_dice(drop_count)
     };
 
     Reply {
