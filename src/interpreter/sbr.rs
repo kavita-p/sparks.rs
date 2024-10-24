@@ -31,7 +31,7 @@ pub fn check(rolls: Rolls, zero_d: bool, cut: Option<i64>) -> Reply {
                 score,
                 rolls.dice.len()
             ),
-            format!("Your {} check was rolled with 0d! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice.", desc_dice_count),
+            format!("Your {desc_dice_count} check was rolled with 0d! Each Sparked by Resistance system handles these rolls differently. You should consult the rules for your particular game to interpret these results. You can use `/roll custom` if you need additional dice."),
             MixedSuccess,
         )
     } else {
@@ -48,7 +48,7 @@ pub fn check(rolls: Rolls, zero_d: bool, cut: Option<i64>) -> Reply {
         if drop_count > 0 {
             desc.push_str(&format!(" (cut {drop_count}d.)"));
         } else {
-            desc.push('.')
+            desc.push('.');
         };
 
         (title_literal.to_string(), desc, status)
